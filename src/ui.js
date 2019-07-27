@@ -1,5 +1,5 @@
 var bullButton=cc.MenuItemImage.extend({
-  refreshTime:0,manaRequired:0,
+  refreshTime:0,manaRequired:0,//isRefreshed:true,
   ctor:function(normalImage, selectedImage, disabledImage, callback, target)
   {
     this._super(normalImage, selectedImage, disabledImage, callback, target);
@@ -7,7 +7,9 @@ var bullButton=cc.MenuItemImage.extend({
   },
  recharge:function(dt)
  {
+  //isRefreshed=true;
 this.setEnabled(true);
+
  },
 });
 
@@ -94,11 +96,11 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
         this.bullButtons[i].setAnchorPoint(0.5,0.5);
         if(this.isPrimary)
         {
-        this.bullButtons[i].setPosition(this.bkgSprite.width*0.11*(i+1),0);     
+        this.bullButtons[i].setPosition(this.bkgSprite.width*0.125*(i+1),0);     
         }
         else
         {
-        this.bullButtons[i].setPosition(this.bkgSprite.width*0.11*(i+1),this.bkgSprite.height);
+        this.bullButtons[i].setPosition(this.bkgSprite.width*0.125*(i+1),this.bkgSprite.height);
         }        
 
     }
@@ -135,16 +137,10 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
     return true;
 
 },
-/*setCallBackForBullButtons:function()
-{
-  for(var i=0;i<this.bullButtons.length;i++)
-    {
-    this.bullButtons[i].setCallback(this.releaseBull(i),this);
-    }
-},*/
+
 
 releaseBull:function(bullId)
-{//cc.log(bullId);
+{
 
   var playerId;
   if(this.isPrimary){
@@ -154,11 +150,11 @@ releaseBull:function(bullId)
   {
     playerId=1;
   }
-  
-  this.bullButtons[bullId].setEnabled(false);
-  this.bullButtons[bullId].scheduleOnce(this.bullButtons[bullId].recharge,BULL_REFRESHTIME[bullId]);
-  this.getParent().setBullDetails(bullId,playerId);
-//cc.log("releasebull");
+
+  {
+    this.getParent().setBullDetails(bullId,playerId);
+  }
+
 },
 
 });
