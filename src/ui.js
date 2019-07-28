@@ -182,7 +182,7 @@ init:function()
 },
 setBullDetails:function(bullId,playerId)
 {
-  cc.log(bullId+";"+playerId);
+ // cc.log(bullId+";"+playerId);
 this.getParent().setBullDetails(bullId,playerId);
 },
 

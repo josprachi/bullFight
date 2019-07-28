@@ -27,10 +27,10 @@ ctor:function()
 
     for(var i=0;i<5;i++)
     {
-        var spr= new cc.Sprite(res.ScoreBar1_png);
+        var spr= new lane(res.LaneBar_png);
         this.lanes.push(spr);
         this.lanes[i].setAnchorPoint(0.5,0.5);
-        this.lanes[i].setRotation(90);
+        //this.lanes[i].setRotation(90);
         this.lanes[i].setPosition(startingPos+cc.winSize.width*0.15*(i),cc.winSize.height*0.5);
         this.addChild(this.lanes[i]);
     }
@@ -42,7 +42,7 @@ isvalidLanePosition:function(location)
   {
     if(cc.rectContainsPoint(this.lanes[i].getBoundingBox(),location))
     {
-        return(cc.p(this.lanes[i].getPosition().x,0));
+        return i;//(cc.p(this.lanes[i].getPosition().x,0));
     }
     else if(i==this.lanes.length-1)
         {
@@ -50,17 +50,24 @@ isvalidLanePosition:function(location)
         }
   }
 },
+getSpwanPosition(laneid)
+{
+	return cc.p(this.lanes[laneid].width*0.5,0);
+},
+addBullToLane:function(bull,laneid)
+{
+this.lanes[laneid].addChild(bull);
+cc.log("add to lane");
+this.lanes[laneid].addToPlayerBulls(bull,bull._parentPlayer);
+},
 
-spwanBull:function(bullType,location,playerId)
+spwanBull:function(bullType,location,playerId,laneid)
 {
 var _bull=new bull(bullType,location,playerId);
 _bull.setPosition(location);
 _bull.scheduleUpdate();
-this.addChild(_bull);
+this.addBullToLane(_bull,laneid);
+//this.addChild(_bull);
 },
 
-init:function()
-{
-
-},
 });

@@ -27,6 +27,7 @@ var res = {
     Background_png : "res/game_background.jpg",
     Player1_png : "res/Player1.png",
     Player2_png : "res/Player2.png",
+    LaneBar_png : "res/laneBar.png",
     ScoreBar1_png : "res/score_bar.png",
     ScoreBar2_png : "res/score_bar2.png",
     Char1_png : "res/Char1.png",

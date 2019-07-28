@@ -3,6 +3,7 @@ var BULL_POWER=[3,6,12,24,48,96,48];
 var BULL_SPEED=[3,6,12,36,60,65,100];
 var BULL_MANA=[5,10,15,20,25,30,35];
 var BULL_REFRESHTIME=[1,3,4,5,6,7,8];
+var MAXY=720;
 
 var HelloWorldScene = cc.Scene.extend({
     bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,
@@ -21,8 +22,13 @@ var HelloWorldScene = cc.Scene.extend({
                 {  
                     var target = event.getCurrentTarget();
                     var location = target.gamelayer.convertToNodeSpace(touch.getLocation());
-                    var spawnPos=target.gamelayer.isvalidLanePosition(location);
-                    if(spawnPos!=null)
+                    var laneId=target.gamelayer.isvalidLanePosition(location);
+                    if(laneId!=null)
+                    {                                            
+                        target.spwanBull(laneId);
+                    }
+                   // var spawnPos=target.gamelayer.isvalidLanePosition(location);
+                    /*if(spawnPos!=null)
                     {
                         if(target.playerBaseId==0)
                         {
@@ -33,7 +39,7 @@ var HelloWorldScene = cc.Scene.extend({
                           spawnPos.y=cc.winSize.height;
                         }                        
                         target.spwanBull(spawnPos);
-                    }
+                    }*/
                     return true;    
                 },
         }, this);
@@ -57,17 +63,28 @@ var HelloWorldScene = cc.Scene.extend({
         this.bullToshoot=bullType;
         this.playerBaseId=baseSource;
     },
-    spwanBull:function(pos)
-    { if((pos.y==0 && this.HUD.player1Base.bullButtons[this.bullToshoot].isEnabled()))
+    spwanBull:function(laneid)//(pos)
+    { 
+      var pos = this.gamelayer.getSpwanPosition(laneid);
+                       if(this.playerBaseId==0)
+                        {
+                            pos.y=0;
+                        }
+                        else
+                        {
+                          pos.y=MAXY;
+                        }
+
+      if((pos.y==0 && this.HUD.player1Base.bullButtons[this.bullToshoot].isEnabled()))
       {
-      this.gamelayer.spwanBull(this.bullToshoot,pos,0);
+      this.gamelayer.spwanBull(this.bullToshoot,pos,0,laneid);
       this.HUD.player1Base.bullButtons[this.bullToshoot].setEnabled(false);
       this.HUD.player1Base.bullButtons[this.bullToshoot].scheduleOnce(this.HUD.player1Base.bullButtons[this.bullToshoot].recharge,BULL_REFRESHTIME[this.bullToshoot]);
       }
 
-      if(pos.y==cc.winSize.height && this.HUD.player2Base.bullButtons[this.bullToshoot].isEnabled())       
+      if(pos.y==MAXY && this.HUD.player2Base.bullButtons[this.bullToshoot].isEnabled())       
       {
-      this.gamelayer.spwanBull(this.bullToshoot,pos,1);
+      this.gamelayer.spwanBull(this.bullToshoot,pos,1,laneid);
       this.HUD.player2Base.bullButtons[this.bullToshoot].setEnabled(false);
       this.HUD.player2Base.bullButtons[this.bullToshoot].scheduleOnce(this.HUD.player2Base.bullButtons[this.bullToshoot].recharge,BULL_REFRESHTIME[this.bullToshoot]);
       }
