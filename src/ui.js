@@ -230,17 +230,33 @@ this.lifeIndicator.setString("Life : "+this.life_remaining.toFixed(2));
 
 this.rechargeMana(dt);
 this.unLockBullBtns();
+this.rechargeCatapult(dt);
 
 },
-rechargeCatapult:function(pow)
+rechargeCatapult:function(dt)
 {
-this.catapultPower+=pow;
+  if(this.catapultPower<100)
+{this.catapultPower+=dt*catapultRechargeRate;}
+},
+rechargeCatapultByTap:function()
+{
+  if(this.catapultPower<100)
+{
+this.catapultPower+=catapultRechargeRate;
+}
 },
 rechargeMana:function(dt)
 {
   if(this.mana_remaining<100)
   {
     this.mana_remaining+=dt*MANA_REFRESH_RATE;
+  }
+},
+rechargeManaByTap:function()
+{
+   if(this.mana_remaining<100)
+  {
+    this.mana_remaining+=MANA_REFRESH_RATE;
   }
 },
 unLockBullBtns:function()

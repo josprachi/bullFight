@@ -7,7 +7,7 @@ var MAXY=720;
 var MANA_REFRESH_RATE=3;
 var isGameOver=false;
 var catapultDamage=30;
-var catapultRechargeRate=5;
+var catapultRechargeRate=1;
 
 var HelloWorldScene = cc.Scene.extend({
     bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,
@@ -32,8 +32,28 @@ var HelloWorldScene = cc.Scene.extend({
                         var laneId=target.gamelayer.isvalidLanePosition(location);
                         if(laneId!=null)
                         {                                            
-                          target.spwanBull(laneId);
-                          target.HUD.rechargeCatapult(catapultRechargeRate);
+                          target.spwanBull(laneId);                          
+                          
+                        }
+                        if(cc.rectContainsPoint(target.HUD.player1Base.manaBar.getBoundingBox(), location))
+                        {
+                          target.HUD.player1Base.rechargeManaByTap(MANA_REFRESH_RATE);
+
+                        }
+						if(cc.rectContainsPoint(target.HUD.player1Base.catapultSprite.getBoundingBox(), location))
+                        {
+                          target.HUD.player1Base.rechargeCatapultByTap();
+
+                        }
+                        if(cc.rectContainsPoint(target.HUD.player2Base.manaBar.getBoundingBox(), location))
+                        {
+                          target.HUD.player2Base.rechargeManaByTap(MANA_REFRESH_RATE);
+
+                        }
+						if(cc.rectContainsPoint(target.HUD.player2Base.catapultSprite.getBoundingBox(), location))
+                        {
+                          target.HUD.player1Base.rechargeCatapultByTap();
+
                         }
                     }
                    

@@ -49,7 +49,7 @@ isvalidLanePosition:function(location)
         }
   }
 },
-getSpwanPosition(laneid)
+getSpwanPosition:function(laneid)
 {
 	return cc.p(this.lanes[laneid].width*0.5,0);
 },

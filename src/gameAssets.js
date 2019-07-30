@@ -40,7 +40,7 @@ var lane= cc.Sprite.extend({
         
     },
     
-    update(dt)
+    update:function(dt)
     {
         this.calculatePlayerPower();
         this.handleCollision();
