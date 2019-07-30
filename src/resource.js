@@ -41,7 +41,8 @@ var res = {
     Chars_png :["res/Char1.png","res/Char2.png","res/Char3.png","res/Char4.png","res/Char5.png","res/Char6.png","res/Char7.png","res/Char8.png"],
     Chars_grey_png :["res/Char1_grey.png","res/Char2_grey.png","res/Char3_grey.png","res/Char4_grey.png","res/Char1_grey.png","res/Char2_grey.png","res/Char3_grey.png","res/Char4_grey.png"],
     Chars_blue_png :["res/Char1_blue.png","res/Char2_blue.png","res/Char3_blue.png","res/Char4_blue.png","res/Char1_blue.png","res/Char2_blue.png","res/Char3_blue.png","res/Char4_blue.png"],
-    
+    Char4_blue_png : "res/Char4_blue.png",
+    Char4_grey_png : "res/Char4_grey.png",
     /*Char1_grey_png : "res/Char1_grey.png",
     Char2_grey_png : "res/Char2_grey.png",
     Char3_grey_png : "res/Char3_grey.png",

@@ -26,14 +26,15 @@ var bullButton=cc.MenuItemImage.extend({
 
 
 var playerBase= cc.Node.extend({
-isPrimary:false, life_remaining:100,mana_remaining:100,
+isPrimary:false, life_remaining:100,mana_remaining:100,catapultPower:0,
 bkgSprite:null,
 playerSprite:null, 
 powerButtons:null, 
 manaBar:null,manaIndicator:null, 
 lifeBar:null, lifeIndicator:null,
-catapultSprite:null, 
+catapultSprite:null,catapultDisabledSprite:null,catapultBtn:null, 
 bullButtons:null, bullMenu:null,
+powermenu:null,
 
 smallBullBtn:null,
 mediumBullBtn:null,
@@ -67,6 +68,8 @@ init:function(bkgImage,playerImage)
    this.lifeBar.setBarChangeRate(cc.p(1,0));
    this.lifeBar.setMidpoint(cc.p(0.5,0.5));
    this.lifeBar.setPercentage(this.life_remaining);
+
+
        
     this.powerButtons=[];
     for (var i = 0 ; i < 4; i++) 
@@ -117,9 +120,7 @@ init:function(bkgImage,playerImage)
 
     }
 
-    this.bullMenu=new cc.Menu(this.bullButtons);
-    this.bullMenu.setPosition(0,0);
-    this.bkgSprite.addChild(this.bullMenu);
+    
     
     if(this.isPrimary)
     {
@@ -149,7 +150,38 @@ init:function(bkgImage,playerImage)
     this.manaIndicator.setPosition(cc.p(this.manaIndicator.width*0.5,this.manaIndicator.height*0.5));
     this.lifeIndicator.setPosition(cc.p(this.lifeIndicator.width*0.5,this.lifeIndicator.height*0.5));
     this.manaBar.addChild(this.manaIndicator);
-    this.lifeBar.addChild(this.lifeIndicator);      
+    this.lifeBar.addChild(this.lifeIndicator); 
+
+
+   this.catapultSprite= new cc.ProgressTimer(new cc.Sprite(res.Char8_png));
+   this.catapultSprite.setType(cc.ProgressTimer.TYPE_BAR);
+   this.catapultSprite.setBarChangeRate(cc.p(0,1));
+   this.catapultSprite.setMidpoint(cc.p(0,0));
+   this.catapultSprite.setPercentage(this.catapultPower);
+
+  
+   this.catapultBtn=new cc.MenuItemImage(res.Char8_png,res.Char4_blue_png,res.Char4_grey_png,function(){this.shootCatapult()},this);
+
+    if(this.isPrimary)
+    {   
+      this.catapultBtn.setPosition(cc.p(cc.winSize.width*0.98,cc.winSize.height*0.25));//((this.manaIndicator.getPosition().x+this.catapultDisabledSprite.width*0.5),this.manaIndicator.getPosition().y+this.catapultDisabledSprite.height)); 
+      this.catapultSprite.setPosition(cc.p(cc.winSize.width*0.98,cc.winSize.height*0.25));
+    }
+else
+ {
+  this.catapultBtn.setPosition(cc.p(cc.winSize.width*0.98,-cc.winSize.height*0.15));
+  this.catapultSprite.setPosition(cc.p(cc.winSize.width*0.98,-cc.winSize.height*0.15));
+}
+
+this.powermenu=new cc.Menu(this.catapultBtn);
+this.powermenu.setPosition(0,0);
+    this.bkgSprite.addChild(this.powermenu);
+    this.bkgSprite.addChild(this.catapultSprite);
+
+this.bullMenu=new cc.Menu(this.bullButtons);
+    this.bullMenu.setPosition(0,0);
+    this.bkgSprite.addChild(this.bullMenu);
+
     this.addChild(this.bkgSprite);
     this.bkgSprite.addChild(this.lifeBar);
     this.bkgSprite.addChild(this.manaBar);
@@ -158,7 +190,22 @@ init:function(bkgImage,playerImage)
 
 },
 
+shootCatapult:function()
+{
+  if(this.catapultSprite.getPercentage()==100)
+  {
+    if(this.isPrimary)
+  {
+    this.getParent().hurtPlayerBase(1,catapultDamage);
+  }
+  else
+  {
+    this.getParent().hurtPlayerBase(0,catapultDamage);
+  }
+  this.catapultSprite.setPercentage(0);
+}
 
+},
 update:function(dt)
 {
   if(this.life_remaining<=0)
@@ -168,12 +215,26 @@ update:function(dt)
   }
 this.lifeBar.setPercentage(this.life_remaining);
 this.manaBar.setPercentage(this.mana_remaining);
+
+this.catapultSprite.setPercentage(this.catapultPower);
+if(this.catapultPower==100)
+{
+  this.catapultBtn.setEnabled(true);
+}
+else{
+  this.catapultBtn.setEnabled(false);
+}
+
 this.manaIndicator.setString("Mana : "+this.mana_remaining.toFixed(2));
 this.lifeIndicator.setString("Life : "+this.life_remaining.toFixed(2));
 
 this.rechargeMana(dt);
 this.unLockBullBtns();
 
+},
+rechargeCatapult:function(pow)
+{
+this.catapultPower+=pow;
 },
 rechargeMana:function(dt)
 {
@@ -284,5 +345,9 @@ setBullDetails:function(bullId,playerId)
 {
 this.getParent().setBullDetails(bullId,playerId);
 },
-
+rechargeCatapult:function(pow)
+{
+  this.player1Base.rechargeCatapult(pow);
+  this.player2Base.rechargeCatapult(pow);
+},
 }); 

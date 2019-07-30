@@ -7,6 +7,7 @@ var MAXY=720;
 var MANA_REFRESH_RATE=3;
 var isGameOver=false;
 var catapultDamage=30;
+var catapultRechargeRate=5;
 
 var HelloWorldScene = cc.Scene.extend({
     bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,
@@ -32,6 +33,7 @@ var HelloWorldScene = cc.Scene.extend({
                         if(laneId!=null)
                         {                                            
                           target.spwanBull(laneId);
+                          target.HUD.rechargeCatapult(catapultRechargeRate);
                         }
                     }
                    
