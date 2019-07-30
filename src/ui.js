@@ -10,6 +10,11 @@ var bullButton=cc.MenuItemImage.extend({
     this.addChild(this.priceTag);
     return true;
   },
+  lock:function()
+  {
+      this.setEnabled(false);
+      this.isRefreshed=false;
+  },
 
  recharge:function(dt)
  {
@@ -118,7 +123,7 @@ init:function(bkgImage,playerImage)
     
     if(this.isPrimary)
     {
-        this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.5));//(this.bkgSprite.width*0.5,this.bkgSprite.height*0.5);
+        this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.5));
         this.manaBar.setMidpoint(cc.p(0,0));
         this.manaBar.setPosition(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height));
         this.lifeBar.setPosition(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height));
@@ -156,13 +161,18 @@ init:function(bkgImage,playerImage)
 
 update:function(dt)
 {
+  if(this.life_remaining<=0)
+  {
+    isGameOver=true;
+    this.life_remaining=0;
+  }
 this.lifeBar.setPercentage(this.life_remaining);
 this.manaBar.setPercentage(this.mana_remaining);
 this.manaIndicator.setString("Mana : "+this.mana_remaining.toFixed(2));
 this.lifeIndicator.setString("Life : "+this.life_remaining.toFixed(2));
 
 this.rechargeMana(dt);
-this.handleBullBtns();
+this.unLockBullBtns();
 
 },
 rechargeMana:function(dt)
@@ -172,7 +182,7 @@ rechargeMana:function(dt)
     this.mana_remaining+=dt*MANA_REFRESH_RATE;
   }
 },
-handleBullBtns:function()
+unLockBullBtns:function()
 {
   for(var i=0;i<this.bullButtons.length;i++)
   {
@@ -185,6 +195,13 @@ handleBullBtns:function()
       this.bullButtons[i].setEnabled(false);
     }
   }
+},
+lockBullBtn:function(bullId)
+{
+  this.mana_remaining-=BULL_MANA[bullId];
+  this.bullButtons[bullId].lock();
+  this.bullButtons[bullId].scheduleOnce(this.bullButtons[bullId].recharge,BULL_REFRESHTIME[bullId]);
+     
 },
 
 releaseBull:function(bullId)
@@ -210,6 +227,8 @@ releaseBull:function(bullId)
 var UILayer = cc.Layer.extend({
 player1Base:null,
 player2Base:null,
+MessageLabel:null,
+MessageString:"Please refresh the browser\nwindow to restart the game!",
 ctor:function(){
 this._super();
 this.player1Base= new playerBase(true);
@@ -221,6 +240,10 @@ this.player2Base= new playerBase(false);
 this.player2Base.init(res.ScoreBar2_png,res.Player2_png);
 
 this.addChild(this.player2Base);
+this.MessageLabel=new cc.LabelTTF(this.MessageString,"Arial",40);
+this.MessageLabel.setColor(new cc.color(0,0,0,1));
+this.MessageLabel.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.5);
+this.addChild(this.MessageLabel);
 return true;
 },
 
@@ -237,8 +260,25 @@ else
 },
 update:function(dt)
 {
+  if(isGameOver)
+  {
+if(this.player1Base.mana_remaining==0)
+ {
+  this.MessageLabel.setString("Player 2 wins !\n"+this.MessageString);
+ }
+ else
+ {
+this.MessageLabel.setString("Player 1 wins !\n"+this.MessageString);
+ }
+    this.MessageLabel.setVisible(true);
+ }  
+  else
+  {
+ this.MessageLabel.setVisible(false); 
+  
   this.player1Base.update(dt);
   this.player2Base.update(dt);
+ }
 },
 setBullDetails:function(bullId,playerId)
 {

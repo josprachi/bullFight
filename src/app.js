@@ -5,11 +5,14 @@ var BULL_MANA=[10,20,30,40,50,60,70];
 var BULL_REFRESHTIME=[1,3,4,5,6,7,8];
 var MAXY=720;
 var MANA_REFRESH_RATE=3;
+var isGameOver=false;
+var catapultDamage=30;
 
 var HelloWorldScene = cc.Scene.extend({
     bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,
     ctor:function()
     {this._super();
+           
            cc.eventManager.addListener({
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
                 swallowTouches: true,
@@ -23,10 +26,13 @@ var HelloWorldScene = cc.Scene.extend({
                 {  
                     var target = event.getCurrentTarget();
                     var location = target.gamelayer.convertToNodeSpace(touch.getLocation());
-                    var laneId=target.gamelayer.isvalidLanePosition(location);
-                    if(laneId!=null)
-                    {                                            
-                        target.spwanBull(laneId);
+                    if(isGameOver==false)
+                    {
+                        var laneId=target.gamelayer.isvalidLanePosition(location);
+                        if(laneId!=null)
+                        {                                            
+                          target.spwanBull(laneId);
+                        }
                     }
                    
                     return true;    
@@ -78,20 +84,15 @@ var HelloWorldScene = cc.Scene.extend({
       if((pos.y==0 && this.HUD.player1Base.bullButtons[this.bullToshoot].isEnabled()))
       {
       this.gamelayer.spwanBull(this.bullToshoot,pos,0,laneid);
-      this.HUD.player1Base.mana_remaining-=BULL_MANA[this.bullToshoot];
-      this.HUD.player1Base.bullButtons[this.bullToshoot].setEnabled(false);
-      this.HUD.player1Base.bullButtons[this.bullToshoot].isRefreshed=false;
-      this.HUD.player1Base.bullButtons[this.bullToshoot].scheduleOnce(this.HUD.player1Base.bullButtons[this.bullToshoot].recharge,BULL_REFRESHTIME[this.bullToshoot]);
+      this.HUD.player1Base.lockBullBtn(this.bullToshoot);
       }
 
       if(pos.y==MAXY && this.HUD.player2Base.bullButtons[this.bullToshoot].isEnabled())       
       {
       this.gamelayer.spwanBull(this.bullToshoot,pos,1,laneid);
-      this.HUD.player2Base.mana_remaining-=BULL_MANA[this.bullToshoot];
-      this.HUD.player2Base.bullButtons[this.bullToshoot].setEnabled(false);
-      this.HUD.player2Base.bullButtons[this.bullToshoot].isRefreshed=false;
-      this.HUD.player2Base.bullButtons[this.bullToshoot].scheduleOnce(this.HUD.player2Base.bullButtons[this.bullToshoot].recharge,BULL_REFRESHTIME[this.bullToshoot]);
-      }
+      this.HUD.player2Base.lockBullBtn(this.bullToshoot);
+      
+  }
 
     },
 });

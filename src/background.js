@@ -30,7 +30,6 @@ ctor:function()
         var spr= new lane(res.LaneBar_png);
         this.lanes.push(spr);
         this.lanes[i].setAnchorPoint(0.5,0.5);
-        //this.lanes[i].setRotation(90);
         this.lanes[i].setPosition(startingPos+cc.winSize.width*0.15*(i),cc.winSize.height*0.5);
         this.addChild(this.lanes[i]);
     }
@@ -42,7 +41,7 @@ isvalidLanePosition:function(location)
   {
     if(cc.rectContainsPoint(this.lanes[i].getBoundingBox(),location))
     {
-        return i;//(cc.p(this.lanes[i].getPosition().x,0));
+        return i;
     }
     else if(i==this.lanes.length-1)
         {
@@ -57,7 +56,6 @@ getSpwanPosition(laneid)
 addBullToLane:function(bull,laneid)
 {
 this.lanes[laneid].addChild(bull);
-cc.log("add to lane");
 this.lanes[laneid].addToPlayerBulls(bull,bull._parentPlayer);
 },
 
@@ -67,7 +65,6 @@ var _bull=new bull(bullType,location,playerId);
 _bull.setPosition(location);
 _bull.scheduleUpdate();
 this.addBullToLane(_bull,laneid);
-//this.addChild(_bull);
 },
 hurtOpponent:function(opponentId,hitpoints)
     {

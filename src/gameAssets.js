@@ -49,12 +49,8 @@ var lane= cc.Sprite.extend({
     },
 
     handleCollision:function()
-    {
-      
-      //this.handlePlayer1Collisions();
-      this.handleSelfBullCollision(this.player1Bulls);
-      //this.handlePlayer2Collisions();
-       this.handleSelfBullCollision(this.player2Bulls);
+    { this.handleSelfBullCollision(this.player1Bulls);
+      this.handleSelfBullCollision(this.player2Bulls);
       this.handleInterPlayerCollisions();
     },
     calculatePlayerPower:function()
@@ -84,7 +80,7 @@ var lane= cc.Sprite.extend({
          {
             for(var i=0;i<bulls.length-1;i++)
          {
-           if(bulls[i].collidedSelf==true)
+           if(bulls[i].collidedSelf==true ||bulls[0].collidedOpp==true)
            {
             bulls[i].setSpeed(speed);
            }
@@ -109,7 +105,7 @@ var lane= cc.Sprite.extend({
             var offset=0;
             for(var i=0;i<bulls.length-1;i++)
             {
-              if(bulls[i].collidedSelf==false && cc.rectIntersectsRect(bulls[i].getBoundingBox(),bulls[i+1].getBoundingBox()))
+              if(bulls[i].collidedSelf==false && bulls[i].collidesWithBull(bulls[i+1]))
              {                
                 bulls[i].collidedSelf=true;
                 offset+=bulls[i+1].getSpeed();
@@ -119,58 +115,25 @@ var lane= cc.Sprite.extend({
             this.changeSpeedOfAll(bulls,speed+offset);
         }
     },
-    /*
-    handlePlayer1Collisions:function()
-    {
-        if(this.player1Bulls.length>1)
-        {
-            var speed=this.player1Bulls[0].getSpeed();
-            var offset=0;
-            for(var i=0;i<this.player1Bulls.length-1;i++)
-            {
-              if(this.player1Bulls[i].collidedSelf==false && cc.rectIntersectsRect(this.player1Bulls[i].getBoundingBox(),this.player1Bulls[i+1].getBoundingBox()))
-             {                
-                this.player1Bulls[i].collidedSelf=true;
-                offset+=this.player1Bulls[i+1].getSpeed();
-                break;                
-             }
-            }
-            this.changeSpeedOfAll(this.player1Bulls,speed+offset);
-        }
-    },
-    handlePlayer2Collisions:function()
-    {
-        if(this.player2Bulls.length>1)
-        {
-            var speed=this.player2Bulls[0].getSpeed();
-            var offset=0;
-            for(var i=0;i<this.player2Bulls.length-1;i++)
-            {
-              if(this.player2Bulls[i].collidedSelf==false && cc.rectIntersectsRect(this.player2Bulls[i].getBoundingBox(),this.player2Bulls[i+1].getBoundingBox()))
-             {                
-                this.player2Bulls[i].collidedSelf=true;
-                offset+=this.player2Bulls[i+1].getSpeed();
-                break;                
-             }
-            }
-            this.changeSpeedOfAll(this.player2Bulls,speed+offset);                     
-        }
-    },*/
+    
 
     handleInterPlayerCollisions:function()
     {
        if(this.collided==false&& this.player1Bulls.length>0 &&this.player2Bulls.length>0)
         {   
-        
-         if(cc.rectIntersectsRect(this.player1Bulls[0].getBoundingBox(),this.player2Bulls[0].getBoundingBox()))
-            { 
-               var speed1=this.calculateSpeedOfALL(this.player1Bulls);
-               var speed2=this.calculateSpeedOfALL(this.player2Bulls); 
-               var offset=speed1-speed2;//this.calculateSpeedOfALL(this.player1Bulls)-this.calculateSpeedOfALL(this.player2Bulls); 
-            cc.log((speed1-offset)+";=>"+(speed2+offset)+";"+offset);
-            this.changeSpeedOfAll(this.player2Bulls,-offset);
+        var offset=0;
+        var speed1=this.calculateSpeedOfALL(this.player1Bulls);
+        var speed2=this.calculateSpeedOfALL(this.player2Bulls); 
+         if(this.player1Bulls[0].collidesWithBull(this.player2Bulls[0]))//getBoundingBox(),this.player2Bulls[0].getBoundingBox()))
+            {            
+            offset=speed1-speed2;
+            this.player1Bulls[0].collidedOpp=true;
+             this.player2Bulls[0].collidedOpp=true;
+            cc.log(offset);      
             this.changeSpeedOfAll(this.player1Bulls,+offset);
-            }         
+            this.changeSpeedOfAll(this.player2Bulls,-offset);
+            }
+                     
         }
      
     },
@@ -189,9 +152,7 @@ var lane= cc.Sprite.extend({
                         break;
                     }
             }
-        cc.log(joinedBulls);
-        /*if(bulls.length>0)
-        {*/
+        
             for(var i=0;i<joinedBulls;i++)
             {
                 if(speed<bulls[i].getSpeed())
@@ -200,7 +161,7 @@ var lane= cc.Sprite.extend({
                 }
             }
 
-       //}
+       
        return speed;
 
     },
@@ -210,11 +171,11 @@ var lane= cc.Sprite.extend({
       
        if(bull._parentPlayer==0)
         {
-         if(bull.getPosition().y>=MAXY+bull.height)
+         if(bull.getPosition().y>=MAXY)
          {            
             this.player1Bulls.shift();
          }
-         else if(bull.getPosition().y<= -bull.height)
+         else if(bull.getPosition().y<= 0)
          {           
             this.player1Bulls.pop();
          }         
@@ -222,16 +183,16 @@ var lane= cc.Sprite.extend({
 
         if(bull._parentPlayer==1)
         {
-         if(bull.getPosition().y>=MAXY+bull.height)
+         if(bull.getPosition().y>=MAXY)
          {
             this.player2Bulls.pop();
          }
-         else if(bull.getPosition().y<= -bull.height)
+         else if(bull.getPosition().y<= 0)
          {
             this.player2Bulls.shift();
          }         
         }
-        //cc.log(this.player1Bulls.length+";"+this.player2Bulls.length);            
+                  
     },
     hurtOpponent:function(playerid,hitpoints)
     {
@@ -289,7 +250,7 @@ var bull= cc.Sprite.extend({
      
      if(this._spawnPos.y==0)
      {
-             if(this.getPosition().y<0 || this.getPosition().y>=MAXY+bull.height) 
+             if(this.getPosition().y<0 || this.getPosition().y>=MAXY) 
              {
                this.die() 
              }
@@ -300,7 +261,7 @@ var bull= cc.Sprite.extend({
      }
      if(this._spawnPos.y==MAXY)
      {
-                 if(this.getPosition().y>this._spawnPos.y ||this.getPosition().y<= -bull.height) 
+                 if(this.getPosition().y>this._spawnPos.y ||this.getPosition().y<= 0) 
                  {
                     this.die();
                  }
@@ -310,10 +271,21 @@ var bull= cc.Sprite.extend({
                  }
      }
     },
+    collidesWithBull:function(bull)
+    {
+        if(cc.rectIntersectsRect(this.getBoundingBox(),bull.getBoundingBox()))
+        {
+         return true;
+        }
+        else
+        {
+            return false;
+        }
+    },
     die:function()
     {
         this.unscheduleUpdate();
-        this.getParent().hurtOpponent(this._parentPlayer,(this.getPower()*0.1));
+        this.getParent().hurtOpponent(this._parentPlayer,(this.getPower()*0.5));
         this.getParent().removeBullFromLane(this);
         this.removeFromParent();
         this.release();         
