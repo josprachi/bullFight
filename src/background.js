@@ -69,5 +69,9 @@ _bull.scheduleUpdate();
 this.addBullToLane(_bull,laneid);
 //this.addChild(_bull);
 },
+hurtOpponent:function(opponentId,hitpoints)
+    {
+      this.getParent().hurtOpponent(opponentId,hitpoints);
+    },
 
 });

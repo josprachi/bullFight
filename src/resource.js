@@ -52,7 +52,7 @@ var res = {
     Char4_blue_png : "res/Char4_blue.png",*/
     lifeBar_png : "res/lifeBar.png",
 
-    ManaIndicator_png:"res/manaSpr.png",
+    ManaIndicator_png:"res/manaBar.png",
     powerBtnBkg_png:"res/powerupBtn.png",
 
 };

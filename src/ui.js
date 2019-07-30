@@ -1,25 +1,35 @@
 var bullButton=cc.MenuItemImage.extend({
-  refreshTime:0,manaRequired:0,//isRefreshed:true,
-  ctor:function(normalImage, selectedImage, disabledImage, callback, target)
+  refreshTime:0,manaRequired:0,isRefreshed:true,
+  priceTag:null,
+  ctor:function(normalImage, selectedImage, disabledImage, callback, target,manaRequired)
   {
     this._super(normalImage, selectedImage, disabledImage, callback, target);
+    this.manaRequired=manaRequired;
+    this.priceTag=new cc.LabelTTF(this.manaRequired,"Arial",30);
+    this.priceTag.setPosition(cc.p(this.width*0.5,0));
+    this.addChild(this.priceTag);
     return true;
   },
+
  recharge:function(dt)
  {
-  //isRefreshed=true;
-this.setEnabled(true);
-
+  this.isRefreshed=true;
  },
+
 });
 
 
 
 var playerBase= cc.Node.extend({
-isPrimary:false, life_remaining:0,powerUps:null, 
+isPrimary:false, life_remaining:100,mana_remaining:100,
 bkgSprite:null,
-playerSprite:null, powerButtons:null, manaBar:null,manaIndicator:null, lifeBar:null, lifeIndicator:null,
-catapultSprite:null, bullStrip:null,tempBullSprite:null, bullButtons:null, bullMenu:null,
+playerSprite:null, 
+powerButtons:null, 
+manaBar:null,manaIndicator:null, 
+lifeBar:null, lifeIndicator:null,
+catapultSprite:null, 
+bullButtons:null, bullMenu:null,
+
 smallBullBtn:null,
 mediumBullBtn:null,
 normalBullBtn:null,
@@ -40,21 +50,19 @@ init:function(bkgImage,playerImage)
     this.bkgSprite=new cc.Sprite(bkgImage);
     this.playerSprite=new cc.Sprite(playerImage);
     this.playerSprite.setAnchorPoint(0.5,0.5);
-    var manaBarSpr=new cc.Sprite(res.ManaIndicator_png);
-    this.manaBar= new cc.ProgressTimer(manaBarSpr);
-    this.manaBar.setType(cc.ProgressTimer.TYPE_RADIAL);
+   
+    this.manaBar= new cc.ProgressTimer(new cc.Sprite(res.ManaIndicator_png));
+    this.manaBar.setType(cc.ProgressTimer.TYPE_BAR);
     this.manaBar.setBarChangeRate(cc.p(1,0));
-    this.manaBar.setAnchorPoint(0.5,0.5);
-    this.manaBar.setPercentage(10);
+    this.manaBar.setMidpoint(cc.p(0.5,0.5));
+    this.manaBar.setPercentage(this.mana_remaining);
 
-this.lifeBar= new cc.ProgressTimer(new cc.Sprite(res.lifeBar_png));
-this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
-        this.lifeBar.setBarChangeRate(cc.p(1,0));
-        this.lifeBar.setMidpoint(cc.p(0,0));
-        this.lifeBar.setPercentage(100);
-        //this.loadPanel.setScale(0.5,0.5);
-        
-    //this.bullStrip = new ccui.ListView();
+   this.lifeBar= new cc.ProgressTimer(new cc.Sprite(res.lifeBar_png));
+   this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
+   this.lifeBar.setBarChangeRate(cc.p(1,0));
+   this.lifeBar.setMidpoint(cc.p(0.5,0.5));
+   this.lifeBar.setPercentage(this.life_remaining);
+       
     this.powerButtons=[];
     for (var i = 0 ; i < 4; i++) 
     {
@@ -69,18 +77,17 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
       {  this.powerButtons[i].setPosition(this.bkgSprite.width*0.2*(i+1),0);
       }
          this.bkgSprite.addChild(this.powerButtons[i],3);
-
     }
 
     this.bullButtons=[];
 
-    this.smallBullBtn=new bullButton(res.Chars_png[SMALL],res.Chars_blue_png[SMALL],res.Chars_grey_png[SMALL],function(){this.releaseBull(SMALL)},this);
-    this.normalBullBtn=new bullButton(res.Chars_png[NORMAL],res.Chars_blue_png[NORMAL],res.Chars_grey_png[NORMAL],function(){this.releaseBull(NORMAL)},this);
-    this.mediumBullBtn=new bullButton(res.Chars_png[MEDIUM],res.Chars_blue_png[MEDIUM],res.Chars_grey_png[MEDIUM],function(){this.releaseBull(MEDIUM)},this);
-    this.heavyBullBtn=new bullButton(res.Chars_png[HEAVY],res.Chars_blue_png[HEAVY],res.Chars_grey_png[HEAVY],function(){this.releaseBull(HEAVY)},this);
-    this.gientBullBtn=new bullButton(res.Chars_png[GIENT],res.Chars_blue_png[GIENT],res.Chars_grey_png[GIENT],function(){this.releaseBull(GIENT)},this);
-    this.jumboBullBtn=new bullButton(res.Chars_png[JUMBO],res.Chars_blue_png[JUMBO],res.Chars_grey_png[JUMBO],function(){this.releaseBull(JUMBO)},this);
-    this.racerBullBtn=new bullButton(res.Chars_png[RACER],res.Chars_blue_png[RACER],res.Chars_grey_png[RACER],function(){this.releaseBull(RACER)},this);
+    this.smallBullBtn=new bullButton(res.Chars_png[SMALL],res.Chars_blue_png[SMALL],res.Chars_grey_png[SMALL],function(){this.releaseBull(SMALL)},this,BULL_MANA[SMALL]);
+    this.normalBullBtn=new bullButton(res.Chars_png[NORMAL],res.Chars_blue_png[NORMAL],res.Chars_grey_png[NORMAL],function(){this.releaseBull(NORMAL)},this,BULL_MANA[NORMAL]);
+    this.mediumBullBtn=new bullButton(res.Chars_png[MEDIUM],res.Chars_blue_png[MEDIUM],res.Chars_grey_png[MEDIUM],function(){this.releaseBull(MEDIUM)},this,BULL_MANA[MEDIUM]);
+    this.heavyBullBtn=new bullButton(res.Chars_png[HEAVY],res.Chars_blue_png[HEAVY],res.Chars_grey_png[HEAVY],function(){this.releaseBull(HEAVY)},this,BULL_MANA[HEAVY]);
+    this.gientBullBtn=new bullButton(res.Chars_png[GIENT],res.Chars_blue_png[GIENT],res.Chars_grey_png[GIENT],function(){this.releaseBull(GIENT)},this,BULL_MANA[GIENT]);
+    this.jumboBullBtn=new bullButton(res.Chars_png[JUMBO],res.Chars_blue_png[JUMBO],res.Chars_grey_png[JUMBO],function(){this.releaseBull(JUMBO)},this,BULL_MANA[JUMBO]);
+    this.racerBullBtn=new bullButton(res.Chars_png[RACER],res.Chars_blue_png[RACER],res.Chars_grey_png[RACER],function(){this.releaseBull(RACER)},this,BULL_MANA[RACER]);
     
     this.bullButtons.push(this.smallBullBtn);
     this.bullButtons.push(this.normalBullBtn);
@@ -105,19 +112,16 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
 
     }
 
-    this.bullMenu=new cc.Menu(this.bullButtons);//(this.smallBullBtn,this.normalBullBtn,this.mediumBullBtn,this.heavyBullBtn,this.jumboBullBtn,this.gientBullBtn, this.racerBullBtn);
+    this.bullMenu=new cc.Menu(this.bullButtons);
     this.bullMenu.setPosition(0,0);
     this.bkgSprite.addChild(this.bullMenu);
-    /*for(var i=0;i<this.bullButtons.length;i++)
-    {
-    this.bullButtons[i].setCallback(this.releaseBull(i),this);
-    }*/
+    
     if(this.isPrimary)
     {
         this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.5));//(this.bkgSprite.width*0.5,this.bkgSprite.height*0.5);
         this.manaBar.setMidpoint(cc.p(0,0));
-        this.manaBar.setPosition(this.bkgSprite.width/2,(this.manaBar.height));
-        this.lifeBar.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.5));
+        this.manaBar.setPosition(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height));
+        this.lifeBar.setPosition(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height));
         this.setAnchorPoint(0.5,1);
         this.setPosition(cc.winSize.width*0.5,this.bkgSprite.height);
     }
@@ -125,11 +129,22 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
     {
          this.playerSprite.setPosition(this.bkgSprite.width/2,-this.playerSprite.height*0.5);
          this.manaBar.setMidpoint(cc.p(0,0));
-         this.manaBar.setPosition(this.bkgSprite.width/2,0);
-         this.lifeBar.setPosition(this.bkgSprite.width/2,-this.playerSprite.height*0.5);
+         this.manaBar.setPosition(this.bkgSprite.width*3/4,-this.playerSprite.height);
+         this.lifeBar.setPosition(this.bkgSprite.width/4,-this.playerSprite.height);
          this.setAnchorPoint(0.5,1);
          this.setPosition(cc.winSize.width*0.5,cc.winSize.height-this.bkgSprite.height);
     }
+
+    this.manaIndicator= new cc.LabelTTF("Mana : "+this.mana_remaining.toFixed(2),"Arial",30);
+    this.lifeIndicator= new cc.LabelTTF("Life : "+this.life_remaining.toFixed(2),"Arial",30);
+    this.manaIndicator.setColor(new cc.color(0,0,0,1));
+    this.lifeIndicator.setColor(new cc.color(0,0,0,1));
+        
+
+    this.manaIndicator.setPosition(cc.p(this.manaIndicator.width*0.5,this.manaIndicator.height*0.5));
+    this.lifeIndicator.setPosition(cc.p(this.lifeIndicator.width*0.5,this.lifeIndicator.height*0.5));
+    this.manaBar.addChild(this.manaIndicator);
+    this.lifeBar.addChild(this.lifeIndicator);      
     this.addChild(this.bkgSprite);
     this.bkgSprite.addChild(this.lifeBar);
     this.bkgSprite.addChild(this.manaBar);
@@ -139,20 +154,54 @@ this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
 },
 
 
+update:function(dt)
+{
+this.lifeBar.setPercentage(this.life_remaining);
+this.manaBar.setPercentage(this.mana_remaining);
+this.manaIndicator.setString("Mana : "+this.mana_remaining.toFixed(2));
+this.lifeIndicator.setString("Life : "+this.life_remaining.toFixed(2));
+
+this.rechargeMana(dt);
+this.handleBullBtns();
+
+},
+rechargeMana:function(dt)
+{
+  if(this.mana_remaining<100)
+  {
+    this.mana_remaining+=dt*MANA_REFRESH_RATE;
+  }
+},
+handleBullBtns:function()
+{
+  for(var i=0;i<this.bullButtons.length;i++)
+  {
+    if(this.mana_remaining>=BULL_MANA[i] && this.bullButtons[i].isRefreshed)
+    {
+      this.bullButtons[i].setEnabled(true);
+    }
+    else
+    {
+      this.bullButtons[i].setEnabled(false);
+    }
+  }
+},
+
 releaseBull:function(bullId)
 {
-
-  var playerId;
-  if(this.isPrimary){
-    playerId=0;
-  }
-  else
+   if(this.mana_remaining>=BULL_MANA[bullId])
   {
-    playerId=1;
-  }
-
-  {
-    this.getParent().setBullDetails(bullId,playerId);
+    var playerId;
+    if(this.isPrimary)
+    {
+      playerId=0;    
+    }
+    else
+    {
+      playerId=1;
+    }
+   this.getParent().setBullDetails(bullId,playerId);
+   //this.mana_remaining-=BULL_MANA[bullId];
   }
 
 },
@@ -174,15 +223,25 @@ this.player2Base.init(res.ScoreBar2_png,res.Player2_png);
 this.addChild(this.player2Base);
 return true;
 },
-init:function()
+
+hurtPlayerBase:function(playerId,hitpoints)
 {
-  /*this.player1Base.setCallBackForBullButtons();
-  this.player2Base.setCallBackForBullButtons();
-  */
+if(playerId==0)
+{
+  this.player1Base.life_remaining-=hitpoints;
+}
+else
+{
+    this.player2Base.life_remaining-=hitpoints;
+ } 
+},
+update:function(dt)
+{
+  this.player1Base.update(dt);
+  this.player2Base.update(dt);
 },
 setBullDetails:function(bullId,playerId)
 {
- // cc.log(bullId+";"+playerId);
 this.getParent().setBullDetails(bullId,playerId);
 },
 
