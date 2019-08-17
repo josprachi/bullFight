@@ -86,10 +86,23 @@ canvas {
   background-color: rgba(0, 0, 0, 0);
 }
 </style>
+<!--<script>
+/*window.addEventListener("beforeunload", function (e) {
+      //setGamePaused();
+
+      (e || window.event).returnValue = null;
+
+      return null;
+    });
+    window.onbeforeunload = function() {
+     // setGamePaused();
+      return null;
+    }*/
+  </script>-->
 </head>
 <body>
 <script src="res/loading.js"></script>
-<canvas id="gameCanvas" width="480" height="720"></canvas>
+<canvas id="gameCanvas" width="640" height="960"></canvas>
 <script src="frameworks/cocos2d-html5/CCBoot.js"></script>
 <script cocos src="main.js"></script>
 </body>

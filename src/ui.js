@@ -6,7 +6,7 @@ var bullButton=cc.MenuItemImage.extend({
     this._super(normalImage, selectedImage, disabledImage, callback, target);
     this.manaRequired=manaRequired;
     this.priceTag=new cc.LabelTTF(this.manaRequired,"Arial",30);
-    this.priceTag.setPosition(cc.p(this.width*0.5,0));
+    
     this.addChild(this.priceTag);
     return true;
   },
@@ -29,7 +29,7 @@ var playerBase= cc.Node.extend({
 isPrimary:false, life_remaining:100,mana_remaining:100,catapultPower:0,
 bkgSprite:null,
 playerSprite:null, 
-powerButtons:null, 
+//powerButtons:null, 
 manaBar:null,manaIndicator:null, 
 lifeBar:null, lifeIndicator:null,
 catapultSprite:null,catapultDisabledSprite:null,catapultBtn:null, 
@@ -71,7 +71,7 @@ init:function(bkgImage,playerImage)
 
 
        
-    this.powerButtons=[];
+    /*this.powerButtons=[];
     for (var i = 0 ; i < 4; i++) 
     {
      var spr= new cc.Sprite(res.powerBtnBkg_png);
@@ -85,7 +85,7 @@ init:function(bkgImage,playerImage)
       {  this.powerButtons[i].setPosition(this.bkgSprite.width*0.2*(i+1),0);
       }
          this.bkgSprite.addChild(this.powerButtons[i],3);
-    }
+    }*/
 
     this.bullButtons=[];
 
@@ -112,10 +112,13 @@ init:function(bkgImage,playerImage)
         if(this.isPrimary)
         {
         this.bullButtons[i].setPosition(this.bkgSprite.width*0.125*(i+1),0);     
+        this.bullButtons[i].priceTag.setPosition(cc.p(this.bullButtons[i].width*0.5,this.bullButtons[i].height*1.1));
+        
         }
         else
         {
         this.bullButtons[i].setPosition(this.bkgSprite.width*0.125*(i+1),this.bkgSprite.height);
+        this.bullButtons[i].priceTag.setPosition(cc.p(this.bullButtons[i].width*0.5,-this.bullButtons[i].height*0.1));
         }        
 
     }
@@ -173,12 +176,12 @@ else
   this.catapultSprite.setPosition(cc.p(cc.winSize.width*0.98,-cc.winSize.height*0.15));
 }
 
-this.powermenu=new cc.Menu(this.catapultBtn);
-this.powermenu.setPosition(0,0);
+    this.powermenu=new cc.Menu(this.catapultBtn);
+    this.powermenu.setPosition(0,0);
     this.bkgSprite.addChild(this.powermenu);
     this.bkgSprite.addChild(this.catapultSprite);
 
-this.bullMenu=new cc.Menu(this.bullButtons);
+    this.bullMenu=new cc.Menu(this.bullButtons);
     this.bullMenu.setPosition(0,0);
     this.bkgSprite.addChild(this.bullMenu);
 
@@ -280,7 +283,6 @@ lockBullBtn:function(bullId)
   this.bullButtons[bullId].scheduleOnce(this.bullButtons[bullId].recharge,BULL_REFRESHTIME[bullId]);
      
 },
-
 releaseBull:function(bullId)
 {
    if(this.mana_remaining>=BULL_MANA[bullId])
@@ -294,13 +296,12 @@ releaseBull:function(bullId)
     {
       playerId=1;
     }
-   this.getParent().setBullDetails(bullId,playerId);
-   //this.mana_remaining-=BULL_MANA[bullId];
+   this.getParent().setBullDetails(bullId,playerId);   
   }
-
 },
 
 });
+
 var UILayer = cc.Layer.extend({
 player1Base:null,
 player2Base:null,
@@ -313,10 +314,18 @@ this.player1Base.init(res.ScoreBar1_png,res.Player1_png);
 
 this.addChild(this.player1Base);
 
+
 this.player2Base= new playerBase(false);
 this.player2Base.init(res.ScoreBar2_png,res.Player2_png);
 
 this.addChild(this.player2Base);
+if(vsComputer==true)
+{
+
+   this.player2Base.powermenu.enabled=false;
+   this.player2Base.bullMenu.enabled=false;
+}
+
 this.MessageLabel=new cc.LabelTTF(this.MessageString,"Arial",40);
 this.MessageLabel.setColor(new cc.color(0,0,0,1));
 this.MessageLabel.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.5);
@@ -338,23 +347,42 @@ else
 update:function(dt)
 {
   if(isGameOver)
-  {
-if(this.player1Base.mana_remaining==0)
- {
-  this.MessageLabel.setString("Player 2 wins !\n"+this.MessageString);
+  {//cc.log("here");
+if(this.player1Base.life_remaining<=0)
+ {this.getParent().setGameOver("Player 2 Wins!");
+  //this.MessageLabel.setString("Player 2 wins !");//+this.MessageString);
  }
- else
+if(this.player2Base.life_remaining<=0)
  {
-this.MessageLabel.setString("Player 1 wins !\n"+this.MessageString);
+  this.getParent().setGameOver("Player 1 Wins!");
+//this.MessageLabel.setString("Player 1 wins !");//+this.MessageString);
  }
     this.MessageLabel.setVisible(true);
+    this.getParent().pauseGame();
  }  
   else
   {
- this.MessageLabel.setVisible(false); 
+    if(!isGamePaused)
+   {
+    this.MessageLabel.setVisible(false); 
   
-  this.player1Base.update(dt);
-  this.player2Base.update(dt);
+    this.player1Base.update(dt);
+    this.player2Base.update(dt);
+    if(vsComputer && !playerTurn)
+    {
+    this.player1Base.powermenu.enabled=false;
+    this.player1Base.bullMenu.enabled=false;
+    }
+    else
+    {
+    this.player1Base.powermenu.enabled=true;
+    this.player1Base.bullMenu.enabled=true; 
+    }
+   }
+   else
+   {
+    this.MessageLabel.setString("PAUSE");
+   }
  }
 },
 setBullDetails:function(bullId,playerId)
@@ -366,4 +394,34 @@ rechargeCatapult:function(pow)
   this.player1Base.rechargeCatapult(pow);
   this.player2Base.rechargeCatapult(pow);
 },
+
+setEnabled:function(enabled)
+{
+  if(enabled)
+  {
+  
+    this.player1Base.powermenu.enabled=true;
+    this.player1Base.bullMenu.enabled=true;
+    if(vsComputer==false)
+    {
+      this.player2Base.powermenu.enabled=true;
+      this.player2Base.bullMenu.enabled=true;
+    } 
+  }
+  else
+  {
+    this.player1Base.powermenu.enabled=false;
+    this.player2Base.powermenu.enabled=false;
+    this.player1Base.bullMenu.enabled=false;
+    this.player2Base.bullMenu.enabled=false;
+ 
+  }
+},
+
+HandleAITurn:function(dt)
+{
+  bullId=Math.floor((Math.random() * 6) + 0); 
+  this.player2Base.releaseBull(bullId);
+},
+
 }); 

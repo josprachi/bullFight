@@ -1,16 +1,7 @@
-var SMALL=0,NORMAL=1,MEDIUM=2,HEAVY=3,JUMBO=4,GIENT=5,RACER=6;
-var BULL_POWER=[3,6,12,24,48,96,48];
-var BULL_SPEED=[3,6,12,36,60,65,100];
-var BULL_MANA=[10,20,30,40,50,60,70];
-var BULL_REFRESHTIME=[1,3,4,5,6,7,8];
-var MAXY=720;
-var MANA_REFRESH_RATE=3;
-var isGameOver=false;
-var catapultDamage=30;
-var catapultRechargeRate=1;
-
-var HelloWorldScene = cc.Scene.extend({
-    bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,
+var isGamePaused=false;
+var GameScene = cc.Scene.extend({
+    bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,menulayer:null,
+    //playerTurn:true,
     ctor:function()
     {this._super();
            
@@ -27,7 +18,7 @@ var HelloWorldScene = cc.Scene.extend({
                 {  
                     var target = event.getCurrentTarget();
                     var location = target.gamelayer.convertToNodeSpace(touch.getLocation());
-                    if(isGameOver==false)
+                    if(isGameOver==false && isGamePaused==false)
                     {
                         var laneId=target.gamelayer.isvalidLanePosition(location);
                         if(laneId!=null)
@@ -40,21 +31,25 @@ var HelloWorldScene = cc.Scene.extend({
                           target.HUD.player1Base.rechargeManaByTap(MANA_REFRESH_RATE);
 
                         }
-						if(cc.rectContainsPoint(target.HUD.player1Base.catapultSprite.getBoundingBox(), location))
+            						if(cc.rectContainsPoint(target.HUD.player1Base.catapultSprite.getBoundingBox(), location))
                         {
                           target.HUD.player1Base.rechargeCatapultByTap();
 
                         }
-                        if(cc.rectContainsPoint(target.HUD.player2Base.manaBar.getBoundingBox(), location))
+                        
+                        if(!vsComputer)
+                      {
+                          if(cc.rectContainsPoint(target.HUD.player2Base.manaBar.getBoundingBox(), location))
                         {
                           target.HUD.player2Base.rechargeManaByTap(MANA_REFRESH_RATE);
 
                         }
-						if(cc.rectContainsPoint(target.HUD.player2Base.catapultSprite.getBoundingBox(), location))
+						            if(cc.rectContainsPoint(target.HUD.player2Base.catapultSprite.getBoundingBox(), location))
                         {
-                          target.HUD.player1Base.rechargeCatapultByTap();
+                          target.HUD.player2Base.rechargeCatapultByTap();
 
                         }
+                      }
                     }
                    
                     return true;    
@@ -74,21 +69,48 @@ var HelloWorldScene = cc.Scene.extend({
         this.HUD = new UILayer();
         
         this.addChild(this.HUD);
+
+       
+
+        this.menulayer=new menuLayer();
+        this.menulayer.init("pauseMenu");
+        this.addChild(this.menulayer,6);
+       
+        this.menulayer.setVisible(false);
+        
+        this.menulayer.hideall();
+        
+        this.menulayer.showPauseMenu();
+        
+        this.menulayer.displayMenu();
+            
+        
+
         this.scheduleUpdate();
     },
     update:function(dt)
     {
+       if(isGamePaused)
+        {
+          this.pauseGame();
+        }
         this.HUD.update(dt);
+        this.gamelayer.update(dt);
+
     },
+
     setBullDetails:function(bullType,baseSource)
     {     
         this.bullToshoot=bullType;
         this.playerBaseId=baseSource;
+   
     },
     hurtOpponent:function(opponentId,hitpoints)
     {
       this.HUD.hurtPlayerBase(opponentId,hitpoints);
     },
+
+
     spwanBull:function(laneid)//(pos)
     { 
       var pos = this.gamelayer.getSpwanPosition(laneid);
@@ -113,9 +135,66 @@ var HelloWorldScene = cc.Scene.extend({
       {
       this.gamelayer.spwanBull(this.bullToshoot,pos,1,laneid);
       this.HUD.player2Base.lockBullBtn(this.bullToshoot);
+      }
+
+     if(vsComputer)
+      {
+       playerTurn=!playerTurn;
+      }
+    },
+    pauseGame:function()
+    {
+      isGamePaused=true;
+      this.HUD.setVisible(false);
       
-  }
+      this.menulayer.enabled=true;
+      this.menulayer.hideall();
+      this.menulayer.showPauseMenu();
+      this.menulayer.displayMenu();
+      this.HUD.setEnabled(false);
+      if(vsComputer)
+        {
+          this.unschedule(this.handleAISpwan);
+        }
 
     },
+
+   playGame:function()
+    {
+      isGamePaused=false;
+      this.menulayer.subMenuIndex=SUB_INDEX_PAUSEMENU;
+      this.HUD.setVisible(true);
+      this.HUD.setEnabled(true);
+      this.menulayer.enabled=false;
+      this.menulayer.setVisible(false);
+
+      if(vsComputer)
+        { 
+          this.schedule(this.handleAISpwan,4.0);
+        }
+    },
+    handleAISpwan:function(dt)
+    {
+      if(!isGamePaused && !isGameOver && !playerTurn)
+      {
+      var laneId=Math.floor((Math.random() * 5) + 0);
+      //this.playerBaseId=1;
+      this.HUD.HandleAITurn(dt);
+      //cc.log(this.playerBaseId+" this is player base id");
+      this.spwanBull(laneId);
+      
+      }
+    },
+    setGameOver:function(str)
+    {//cc.log("set menu title");
+      this.menulayer.setMenuTitle(str);
+    },
+
+  onExit:function()
+  {
+    this._super();
+    this.removeAllChildren(true);   
+  }
+
 });
 
