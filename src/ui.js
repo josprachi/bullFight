@@ -56,17 +56,18 @@ init:function(bkgImage,playerImage)
     this.bkgSprite=new cc.Sprite(bkgImage);
     this.playerSprite=new cc.Sprite(playerImage);
     this.playerSprite.setAnchorPoint(0.5,0.5);
+    this.playerSprite.setScale(0.35,0.35);
    
     this.manaBar= new cc.ProgressTimer(new cc.Sprite(res.ManaIndicator_png));
     this.manaBar.setType(cc.ProgressTimer.TYPE_BAR);
     this.manaBar.setBarChangeRate(cc.p(1,0));
-    this.manaBar.setMidpoint(cc.p(0.5,0.5));
+    this.manaBar.setMidpoint(cc.p(0,0));
     this.manaBar.setPercentage(this.mana_remaining);
 
    this.lifeBar= new cc.ProgressTimer(new cc.Sprite(res.lifeBar_png));
    this.lifeBar.setType(cc.ProgressTimer.TYPE_BAR);
    this.lifeBar.setBarChangeRate(cc.p(1,0));
-   this.lifeBar.setMidpoint(cc.p(0.5,0.5));
+   this.lifeBar.setMidpoint(cc.p(0,0));
    this.lifeBar.setPercentage(this.life_remaining);
 
 
@@ -127,19 +128,19 @@ init:function(bkgImage,playerImage)
     
     if(this.isPrimary)
     {
-        this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.5));
-        this.manaBar.setMidpoint(cc.p(0,0));
-        this.manaBar.setPosition(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height));
-        this.lifeBar.setPosition(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height));
+        this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.15));
+        //this.manaBar.setMidpoint(cc.p(0,0));
+        this.manaBar.setPosition(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
+        this.lifeBar.setPosition(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
         this.setAnchorPoint(0.5,1);
         this.setPosition(cc.winSize.width*0.5,this.bkgSprite.height);
     }
     else
     {
-         this.playerSprite.setPosition(this.bkgSprite.width/2,-this.playerSprite.height*0.5);
-         this.manaBar.setMidpoint(cc.p(0,0));
-         this.manaBar.setPosition(this.bkgSprite.width*3/4,-this.playerSprite.height);
-         this.lifeBar.setPosition(this.bkgSprite.width/4,-this.playerSprite.height);
+         this.playerSprite.setPosition(this.bkgSprite.width/2,-this.playerSprite.height*0.15);
+        // this.manaBar.setMidpoint(cc.p(0,0));
+         this.manaBar.setPosition(this.bkgSprite.width*3/4,-this.playerSprite.height*0.15);
+         this.lifeBar.setPosition(this.bkgSprite.width/4,-this.playerSprite.height*0.15);
          this.setAnchorPoint(0.5,1);
          this.setPosition(cc.winSize.width*0.5,cc.winSize.height-this.bkgSprite.height);
     }

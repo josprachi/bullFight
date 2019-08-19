@@ -84,7 +84,7 @@ var GameScene = cc.Scene.extend({
         
         this.menulayer.displayMenu();
             
-        
+        //this.shake();
 
         this.scheduleUpdate();
     },
@@ -98,6 +98,20 @@ var GameScene = cc.Scene.extend({
         this.gamelayer.update(dt);
 
     },
+
+    shake:function()
+  {
+  var move = cc.moveBy(0.05, cc.p(8, 8));
+  var move_back = move.reverse();
+  var move_seq = cc.sequence(move, move_back);
+  var move_rep = move_seq.repeatForever();
+  var t_copy = move_rep.clone();
+
+  this.runAction(move_rep);
+  
+
+  },
+
 
     setBullDetails:function(bullType,baseSource)
     {     

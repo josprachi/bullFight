@@ -25,6 +25,7 @@
 var res = {
     HelloWorld_png : "res/HelloWorld.png",
     Background_png : "res/Background/game_background.jpg",
+    mainMenuBkg_png: "res/Background/game_background_1.png",
     Player1_png : "res/PlayerUI/Player1.png",
     Player2_png : "res/PlayerUI/Player2.png",
     LaneBar_png : "res/Background/laneBar.png",

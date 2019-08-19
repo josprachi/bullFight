@@ -1,5 +1,9 @@
 var SUB_INDEX_MAINMENU= 0,SUB_INDEX_INSTMENU= 0,SUB_INDEX_PAUSEMENU= 1,SUB_INDEX_GAMEOVER=2;
-var isShop=false;
+
+
+//var isShop=false;
+
+
 var menuLayer=cc.Layer.extend({
 	menuIndex:0,subMenuIndex:0,
 	nextSc:0,closeTimer:2,
@@ -112,8 +116,8 @@ var menuLayer=cc.Layer.extend({
 		  {
 		   
 		    this.setVisible(true);
-	    	this.playerSelBtn1.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.6);
-			this.playerSelBtn2.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.4);   
+	    	this.playerSelBtn1.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.5);
+			this.playerSelBtn2.setPosition(cc.winSize.width*0.5,cc.winSize.height*0.3);   
 		
 		   this.scheduleOnce(this.stopMenuTransition,1.5);
 		  }
@@ -155,7 +159,7 @@ var menuLayer=cc.Layer.extend({
 
 	/*display main menu*/
 	showMainMenu:function()
-	{		this.bgPanel.setVisible(true);
+	{		//this.bgPanel.setVisible(true);
 			this.playerSelBtn1.setVisible(true);
 			this.playerSelBtn2.setVisible(true);
 	},

@@ -1,4 +1,5 @@
 var isGamePaused=false;
+
 var menuScene=cc.Scene.extend({
 
 	menuLayer:null,
@@ -42,7 +43,8 @@ var menuScene=cc.Scene.extend({
 		this.addChild(this.menuLayer,6);
 		this.menuLayer.setVisible(false);
 		this.menuLayer.hideall();
-		this.menuLayer.showMainMenu();	
+		this.menuLayer.showMainMenu();
+		this.instlayer.reduceTime();	
 		return true;
 	},
 	update:function(dt)
@@ -67,18 +69,14 @@ var menuScene=cc.Scene.extend({
 	},
 	playGame:function()
 	{
-		
-		{
-				//isGamePaused=true;
 				isGamePaused=!isGamePaused;
 				isGameOver=false;				
-				this.scheduleOnce(this.enterGame,0.5);
-			}	
+				this.scheduleOnce(this.enterGame,0.5);	
 	},
 	enterGame:function(dt)
 	{
 		//cc.log("enter game  from splash"+ isGamePaused);
-		cc.director.runScene(new GameScene());
+		cc.director.runScene(new splashScene());//GameScene());
 		
 	}
 
@@ -93,88 +91,44 @@ instLayer=cc.Layer.extend({
 	isInstOn:false,
 	instLabel:null,
 	ind:0,
+
+GameTitle:null,
+SuperGamingTitle:null,
+varsionTitle:null,
 	/*constructor*/
 	ctor:function(){
 		this._super();	
-
-		/*event manager for user input*/	
-		return true;
-		//this.init();		 
+		return true;			 
 	},
 
 	/*Display splash image*/
 	init:function(){
 
-		this.splash= new cc.Sprite(res.Background_png);
+		this.splash= new cc.Sprite(res.mainMenuBkg_png);
 		this.splash.setPosition(cc.winSize.width/2, cc.winSize.height/2);	
 	
 		
 		this.addChild(this.splash,1); 
-		this.nameLabel=new cc.Sprite(res.title_png);
-		this.addChild(this.nameLabel, 3);	
-		this.nameLabel.setPosition(cc.winSize.width/2,cc.winSize.height*0.80);
-		this.schedule(this.reduceTime,0.25);
-	//	this.scheduleUpdate();
-		return true;
+
+
+		this.GameTitle=new cc.LabelTTF("-SUPER BULL FIGHT-","Arial",45);
+        this.GameTitle.setPosition(cc.winSize.width/2,cc.winSize.height*0.80);
+        this.addChild(this.GameTitle, 3);
+
+        this.SuperGamingTitle=new cc.LabelTTF("-SuperGaming-","Arial",30);
+        this.SuperGamingTitle.setPosition(cc.winSize.width/2,cc.winSize.height*0.95);
+        this.addChild(this.SuperGamingTitle, 3);
+
+
+        this.varsionTitle=new cc.LabelTTF("Version: "+ 3.0,"Arial",24);
+        this.varsionTitle.setPosition(cc.winSize.width/2,cc.winSize.height*0.1);
+        this.addChild(this.varsionTitle, 3);
 	},
-
-	
-
-
 	/*countdown timer for displaying menu*/
-	reduceTime:function(dt)
+	reduceTime:function()
 	{
-		this.closeTime--;
-		if(this.closeTime==0){
-			this.getParent().menuLayer.displayMenu();
-			}
-		/*if(!cc.sys.isMobile)
-		{
-			if(this.closeTime==0){
-			this.getParent().menuLayer.displayMenu();
-			}
-		}
-		else
-		{
-			if(typeof window.orientation === 'undefined')
-			{
-				if(this.closeTime<=0 && window.matchMedia("(orientation: landscape)").matches)		
-				{
-			
-					this.closeTime=3;
-				}
-
-				if(this.closeTime==0 && window.matchMedia("(orientation: portrait)").matches)
-				{
-				
-				this.getParent().menuLayer.displayMenu();
-				}					
-			}
-			else
-			{
-				if(this.closeTime<=0 && (((window.orientation===(90)||(window.orientation===(-90))) )))
-				{
-				this.closeTime=3;
-				}
-				if(this.closeTime==0 && !(window.orientation===(90)||(window.orientation===(-90))))
-				{
-				this.getParent().menuLayer.displayMenu();
-				}
-			}
-		}*/
+		this.getParent().menuLayer.displayMenu();
 	},
-
-	/*update*/
-	/*update:function(dt)
-	{
-		if(this.ind!=langIndex)
-		{
-		this.setCopyStr();
-		this.ind=langIndex;
-		
-		}
-	},*/
-
 	/*onexit*/
 	onExit:function()
 	{
@@ -183,4 +137,145 @@ instLayer=cc.Layer.extend({
 	}
 
 });
+
+var splashScene=cc.Scene.extend({
+	
+	instlayer:null,
+
+
+	ctor : function() {
+		this.instlayer=null;
+
+		this._super();	
+		return true;
+		
+	},
+
+	/*Display splash layer*/
+	onEnterTransitionDidFinish:function () 
+	{
+	
+		this._super();
+		this.instlayer=new splashLayer();		
+		this.addChild(this.instlayer, 1);
+		this.instlayer.init();
+		//this.instlayer.reduceTime();	
+		return true;
+	},
+
+	/*Onexit*/
+	onExit:function()
+	{
+		this._super();
+		this.removeAllChildren(true);
+	},
+	
+	/*Scene transition*/
+	onExitTransitionDidStart:function()
+	{
+
+	},
+	playGame:function()
+	{
+	  this.scheduleOnce(this.enterGame,0.5);	
+	},
+	enterGame:function(dt)
+	{
+		//cc.log("enter game  from splash"+ isGamePaused);
+		cc.director.runScene(new GameScene());
+		
+	}
+
+});
+
+
+
+splashLayer=cc.Layer.extend({
+	closeTime:10,
+	collisionParticle:null,
+
+	Player1Spr:null,	
+    player1Score:null,
+    Player1Name:null,
+    Player2Spr:null,
+	player2Score:null,
+    Player2Name:null,
+	
+	/*constructor*/
+	ctor:function(){
+		this._super();	
+		return true;			 
+	},
+
+	/*Display splash image*/
+	init:function(){
+
+	this.Player1Spr=new cc.Sprite(res.Player1_png);	
+    this.player1Score=new cc.LabelTTF("0","Arial",30);       
+    this.Player1Name=new cc.LabelTTF("Player1","Arial",24);
+    
+    this.Player1Spr.setPosition(cc.winSize.width/2,cc.winSize.height*0.25);
+    this.addChild(this.Player1Spr);
+    this.player1Score.setPosition(cc.winSize.width*0.25,cc.winSize.height*0.1);
+    this.addChild(this.player1Score);
+    this.Player1Name.setPosition(cc.winSize.width/2,cc.winSize.height*0.1);
+    this.addChild(this.Player1Name);
+
+    this.Player2Spr=new cc.Sprite(res.Player2_png);	
+    this.player2Score=new cc.LabelTTF("0","Arial",30);       
+    this.Player2Name=new cc.LabelTTF("Player2","Arial",24);
+    
+    this.Player2Spr.setPosition(cc.winSize.width/2,cc.winSize.height*0.75);
+    this.addChild(this.Player2Spr);
+    this.player2Score.setPosition(cc.winSize.width*0.25,cc.winSize.height*0.85);
+    this.addChild(this.player2Score);
+    this.Player2Name.setPosition(cc.winSize.width/2,cc.winSize.height*0.9);
+    this.addChild(this.Player2Name);
+    this.schedule(this.reduceTime,0.25);
+     
+	},
+	/*countdown timer for displaying menu*/
+	reduceTime:function()
+	{
+	this.closeTime--;
+	if(this.closeTime==0)
+		{this.unschedule(this.reduceTime);
+		  this.shake();
+		  this.closeTime=10;
+		  this.schedule(this.PlayGame,0.25);
+		  //this.getParent().playGame();
+		}
+	},
+	PlayGame:function()
+	{
+	this.closeTime--;
+	if(this.closeTime==0)
+		{this.unschedule(this.PlayGame);
+		  //this.shake();
+		  this.getParent().playGame();
+		}
+	},
+	
+	/*onexit*/
+	onExit:function()
+	{
+		this._super();
+		this.removeAllChildren(true);		
+	},
+
+	shake:function()
+	{
+	var move = cc.moveBy(0.05, cc.p(8, 8));
+	var move_back = move.reverse();
+	var move_seq = cc.sequence(move, move_back);
+	var move_rep = move_seq.repeatForever();
+	var t_copy = move_rep.clone();
+    this.Player1Spr.runAction(move_rep);
+    this.Player2Spr.runAction(t_copy);
+
+	},
+
+});
+
+
 
