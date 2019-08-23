@@ -48,6 +48,8 @@ var res = {
     lifeBar_png : "res/PlayerUI/lifeBar.png",
 
     ManaIndicator_png:"res/PlayerUI/manaBar.png",
+    IndicatorBar_png: "res/PlayerUI/barBkg.png",
+    IndicatorManaBar_png: "res/PlayerUI/barBkg1.png",
     powerBtnBkg_png:"res/powerupBtn.png",
     
     PlayBtn_png:"res/GameMenu/PlayBtn.png",

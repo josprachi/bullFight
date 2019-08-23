@@ -370,7 +370,7 @@ calculateSpeedOfAll:function(bulls)
             }
          else 
           {
-            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._speed*dt*10))); 
+            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._speed*dt))); 
           } 
         } 
       if(this._spawnPos.y==MAXY) 
@@ -381,7 +381,7 @@ calculateSpeedOfAll:function(bulls)
             } 
           else 
             {
-              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y-=(this._speed*dt*10))); 
+              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y-=(this._speed*dt))); 
             }
          } 
        }, 

@@ -30,7 +30,8 @@ isPrimary:false, life_remaining:100,mana_remaining:100,catapultPower:0,
 bkgSprite:null,
 playerSprite:null, 
 //powerButtons:null, 
-manaBar:null,manaIndicator:null, 
+manaBar:null,manaIndicator:null,
+lifeBarBkg:null,manaBarBkg:null, 
 lifeBar:null, lifeIndicator:null,
 catapultSprite:null,catapultDisabledSprite:null,catapultBtn:null, 
 bullButtons:null, bullMenu:null,
@@ -69,6 +70,10 @@ init:function(bkgImage,playerImage)
    this.lifeBar.setBarChangeRate(cc.p(1,0));
    this.lifeBar.setMidpoint(cc.p(0,0));
    this.lifeBar.setPercentage(this.life_remaining);
+
+   this.manaBarBkg=new cc.Sprite(res.IndicatorManaBar_png);
+
+   this.lifeBarBkg=new cc.Sprite(res.IndicatorBar_png);
 
 
        
@@ -184,12 +189,19 @@ else
 
     this.bullMenu=new cc.Menu(this.bullButtons);
     this.bullMenu.setPosition(0,0);
-    this.bkgSprite.addChild(this.bullMenu);
+    this.bkgSprite.addChild(this.bullMenu,3);
 
     this.addChild(this.bkgSprite);
     this.bkgSprite.addChild(this.lifeBar);
     this.bkgSprite.addChild(this.manaBar);
     this.bkgSprite.addChild(this.playerSprite);
+
+
+    this.lifeBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,this.lifeBarBkg.height*0.5));
+    this.manaBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,this.bkgSprite.height+this.manaBarBkg.height*0.5));
+    this.bkgSprite.addChild(this.lifeBarBkg,1);
+    this.bkgSprite.addChild(this.manaBarBkg,1);
+
     return true;
 
 },
