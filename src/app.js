@@ -1,6 +1,6 @@
 var isGamePaused=false;
 var GameScene = cc.Scene.extend({
-    bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,menulayer:null,
+    bullToshoot:0,playerBaseId:0,Bkglayer:null,gamelayer:null,HUD:null,menulayer:null,origPos:null,
     //playerTurn:true,
     ctor:function()
     {this._super();
@@ -59,6 +59,8 @@ var GameScene = cc.Scene.extend({
     },
     onEnterTransitionDidFinish:function () {
         this._super();
+        this.origPos=this.getPosition();
+        //cc.log(this.origPos);
         this.Bkglayer = new BackgroundLayer();
         this.addChild(this.Bkglayer);
 
@@ -99,18 +101,38 @@ var GameScene = cc.Scene.extend({
 
     },
 
+increaseMana:function(val)
+{if(val==0)
+{
+this.HUD.player1Base.mana_remaining+=manaPotionVal;}
+else
+{
+	this.HUD.player2Base.mana_remaining+=manaPotionVal;
+}
+},
+increaseLife:function(val)
+{if(val==0)
+{
+this.HUD.player1Base.life_remaining+=lifePotionVal;}
+else
+{
+	this.HUD.player2Base.life_remaining+=lifePotionVal;
+}
+},
     shake:function()
   {
 	  cc.log("shake");
-  var move = cc.moveBy(0.05, cc.p(8, 8));
+  var move = cc.moveTo(0.05, cc.p(8, 8));
   var move_back = move.reverse();
   var move_seq = cc.sequence(move, move_back);
   var move_rep = cc.repeat(move_seq, 4);//move_seq.repeatForever();
  // var t_copy = move_rep.clone();
-
   this.runAction(move_rep);
-  
-
+  },
+  resetPosition:function()
+  {
+    cc.log("resetPosition");
+    this.setPosition(this.origPos);
   },
     setBullDetails:function(bullType,baseSource)
     {     

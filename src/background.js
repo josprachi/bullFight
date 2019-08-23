@@ -14,11 +14,7 @@
         return true;
 
     },
-	shake:function()
-	{  cc.log("shake from bkg layer");
 		
-		this.getParent().shake();
-	},	
     });
 
 
@@ -52,6 +48,10 @@
     {
         isGamePaused=true;
     },
+increaseMana:function(val)
+{this.getParent().increaseMana(val)},
+increaseLife:function(val)
+{this.getParent().increaseLife(val)},
 
     isvalidLanePosition:function(location)
     {
@@ -95,8 +95,10 @@
 	
     shake:function()
 	{  cc.log("shake from game layer");
-		
+		//var pos=this.getParent().getPosition();
 		this.getParent().shake();
+        this.getParent().resetPosition();
+        
 	},	
     
     update:function(dt)

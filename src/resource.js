@@ -53,7 +53,9 @@ var res = {
     IndicatorBar_png: "res/PlayerUI/barBkg.png",
     IndicatorManaBar_png: "res/PlayerUI/barBkg1.png",
     powerBtnBkg_png:"res/powerupBtn.png",
-    
+    manaPotion_png:"res/PlayerUI/bluePotion.png",
+	lifePotion_png:"res/PlayerUI/redPotion.png",
+	
     PlayBtn_png:"res/GameMenu/PlayBtn.png",
     PlayBtn_grey_png:"res/GameMenu/PlayBtn_Grey.png",
     PlayBtn_red_png:"res/GameMenu/PlayBtn_Red.png",

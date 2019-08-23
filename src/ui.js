@@ -118,10 +118,13 @@
 		
 		//if(this.isPrimary)
 		{
+			this.lifeBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,this.bkgSprite.height+this.lifeBarBkg.height*0.5));//this.lifeBarBkg.height*0.5));
+		    this.manaBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,-this.manaBarBkg.height*0.75));
+	
 			this.playerSprite.setPosition(this.bkgSprite.width/2,(this.bkgSprite.height+this.playerSprite.height*0.15));
 			//this.manaBar.setMidpoint(cc.p(0,0));
-			this.manaBar.setPosition(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
-			this.lifeBar.setPosition(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
+			this.manaBar.setPosition(this.manaBarBkg.getPosition());//(this.bkgSprite.width*3/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
+			this.lifeBar.setPosition(this.lifeBarBkg.getPosition());//(this.bkgSprite.width/4,(this.bkgSprite.height+this.playerSprite.height*0.15));
 			this.setAnchorPoint(0.5,1);
 			this.setPosition(cc.winSize.width*0.5,this.bkgSprite.height);
 		}
@@ -135,8 +138,8 @@
 			 this.setPosition(cc.winSize.width*0.5,cc.winSize.height-this.bkgSprite.height);
 		}*/
 
-		this.manaIndicator= new cc.LabelTTF("Mana : "+this.mana_remaining.toFixed(2),"Arial",30);
-		this.lifeIndicator= new cc.LabelTTF("Life : "+this.life_remaining.toFixed(2),"Arial",30);
+		this.manaIndicator= new cc.LabelTTF(this.mana_remaining.toFixed(2),"Arial",30);
+		this.lifeIndicator= new cc.LabelTTF(this.life_remaining.toFixed(2),"Arial",30);
 		this.manaIndicator.setColor(new cc.color(0,0,0,1));
 		this.lifeIndicator.setColor(new cc.color(0,0,0,1));
 			
@@ -186,8 +189,6 @@
 		this.bkgSprite.addChild(this.playerSprite,9);
 
 
-		this.lifeBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,this.bkgSprite.height+this.lifeBarBkg.height*0.5));//this.lifeBarBkg.height*0.5));
-		this.manaBarBkg.setPosition(cc.p(this.bkgSprite.width*0.5,-this.manaBarBkg.height*0.75));
 		this.bkgSprite.addChild(this.lifeBarBkg,1);
 		this.bkgSprite.addChild(this.manaBarBkg,1);
 
@@ -230,8 +231,8 @@
 	  this.catapultBtn.setEnabled(false);
 	}
 
-	this.manaIndicator.setString("Mana : "+this.mana_remaining.toFixed(2));
-	this.lifeIndicator.setString("Life : "+this.life_remaining.toFixed(2));
+	this.manaIndicator.setString(this.mana_remaining.toFixed(2));
+	this.lifeIndicator.setString(this.life_remaining.toFixed(2));
 
 	this.rechargeMana(dt);
 	this.unLockBullBtns();

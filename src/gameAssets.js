@@ -11,6 +11,8 @@
  var vsComputer=false; 
  var playerTurn=false;
  var player1Wins=false;
+var lifePotionVal=15;
+var manaPotionVal=20;
 
 
  var lane= cc.Sprite.extend({
@@ -21,7 +23,9 @@
  player1PowIndicator:null,
  player2PowIndicator:null,
  collided:false, 
-
+ lifePotion:null,
+ manaPotion:null,
+inventaryPos:null,
  
  ctor:function(img) 
  {
@@ -30,6 +34,14 @@
      this.player2Bulls=[]; 
      this.player1Power=0; 
      this.player2Power=0; 
+  this.inventaryPos=cc.p(0,this.height*10);
+	  this.lifePotion=new cc.Sprite(res.lifePotion_png);
+	  this.lifePotion.setPosition(this.inventaryPos);
+	  this.addChild(this.lifePotion,6);
+	  
+	  this.manaPotion=new cc.Sprite(res.manaPotion_png);
+	  this.manaPotion.setPosition(this.inventaryPos);
+	  this.addChild(this.manaPotion,6);
      this.player1PowIndicator= new cc.LabelTTF(this.player1Power,(20)); 
      this.player1PowIndicator.setPosition(this.width*0.5,this.height*0.15); 
      this.player2PowIndicator= new cc.LabelTTF(this.player2Power,(20)); 
@@ -40,9 +52,27 @@
      this.player2PowIndicator.setVisible(false); 
      this.setAnchorPoint(0.5,0.5); 
      this.scheduleUpdate(); 
+ this.schedule(this.showPotions,10.0);
      return true; 
  }, 
 
+showPotions:function(dt)
+	{
+		var prob=Math.floor((Math.random() * 17) + 0);
+		//var ypos=Math.floor((Math.random() * this.height*) + this.height*0.15);
+		if(prob%3==0)
+		{var potionId=Math.floor((Math.random() * 2) + 0);
+		
+		if(potionId==0)
+		{
+			this.lifePotion.setPosition(this.width*0.5,this.height*0.5);
+		}
+		else
+		{
+		this.manaPotion.setPosition(this.width*0.5,this.height*0.5);	
+		}
+		}
+	},
  addToPlayerBulls:function(bull,playerId) 
  {
  this.collided = false; 
@@ -93,21 +123,30 @@ calculatePlayerPower:function()
 
     if(this.player1Bulls.length>0) 
     {
-     for(var i=0;i<this.player1Bulls.length;i++)
+	this.player1Power=this.player1Bulls[0].getPower();
+  	
+     for(var i=1;i<this.player1Bulls.length;i++)
       {
          {
-          this.player1Power+=this.player1Bulls[i].getPower(); 
+		 if(this.player1Bulls[i].collidedOpp)	 
+          {
+			 this.player1Power+=this.player1Bulls[i].getPower(); 
+	      }
          }
       }
     } 
 
     if(this.player2Bulls.length>0)
      {
-      for(var i=0;i<this.player2Bulls.length;i++)
+	 this.player2Power=this.player2Bulls[0].getPower();
+      for(var i=1;i<this.player2Bulls.length;i++)
        {
          {
+			  if(this.player2Bulls[i].collidedOpp)	 
+          {
            this.player2Power+=this.player2Bulls[i].getPower(); 
-          }
+		 }
+		 }
        }
      } 
     this.player1PowIndicator.setString(this.player1Power.toString()); 
@@ -136,66 +175,25 @@ calculatePlayerPower:function()
      }
 
     },
-/*
-changeSpeedOfAll:function(bulls,speed) 
-{
-  if(bulls.length>1) 
-  { 
-     for(var i=0;i<bulls.length-1;i++) 
-      {
-         if(bulls[i].collidedSelf==true||bulls[i].collidedOpp==true) 
-         {
-            bulls[i].setSpeed(speed);
-         }
-
-      } 
-      if(bulls[bulls.length-2].collidedSelf==true) 
-      {
-       bulls[bulls.length-1].setSpeed(speed);
-      }
-     } 
-     else 
-     {
-       bulls[0].setSpeed(speed); 
-     }  
-}, 
-
-handleSelfBullCollision:function(bulls) 
-{
-  if(bulls.length>1) 
-  {
-     var speed=bulls[0].getSpeed(); 
-     var offset=0; 
-     for(var i=0;i<bulls.length-1;i++) 
-     {
-        if(bulls[i].collidedSelf==false && bulls[i].collidesWithBull(bulls[i+1])) 
-        {
-         bulls[i].collidedSelf=true; 
-         if((bulls[i].getPower()<bulls[i+1].getPower()))// ||(bulls[i].getSpeed()<bulls[i+1].getSpeed())) 
-         {
-            offset+=(bulls[i+1].getSpeed());
-         }
-         break; 
-        } 
-     }
-     for(var i=0;i<bulls.length-1;i++) 
-      {
-         if(bulls[i].collidedSelf==true) 
-         {
-            bulls[i].setSpeed(speed+offset);
-         }
-
-        if(bulls[bulls.length-2].collidedSelf==true) 
-         {         
-           bulls[bulls.length-1].setSpeed(speed);
-         }
-      } 
-      
- } 
-}, */
 
     handleSelfBullCollision:function(bulls)
     {
+	if(bulls.length>0)
+		{
+			for(var i=0;i<bulls.length;i++)
+			{
+				if(bulls[i].collidesWithBull(this.manaPotion))
+				{
+					this.manaPotion.setPosition(this.inventaryPos); 
+			         this.getParent().increaseMana(bulls[i]._parentPlayer);
+       			}
+				if(bulls[i].collidesWithBull(this.lifePotion))
+				{
+					this.lifePotion.setPosition(this.inventaryPos); 
+			         this.getParent().increaseLife(bulls[i]._parentPlayer);
+       			}
+			}
+		}
         if(bulls.length>1)
         {
             var speed=bulls[0].getSpeed();
@@ -203,8 +201,12 @@ handleSelfBullCollision:function(bulls)
             for(var i=0;i<bulls.length-1;i++)
             {
               if(bulls[i].collidedSelf==false && bulls[i].collidesWithBull(bulls[i+1]))
-             {                
+             {  /*if(bulls[i]._direction != bulls[i+1]._direction)
+			    {
+					bulls[i+1]._direction=bulls[i]._direction;
+			    }              */
                 bulls[i].collidedSelf=true;
+				bulls[i+1].collidedOpp=true;
                 offset+=bulls[i+1].getSpeed();
                 break;                
              }
@@ -213,42 +215,22 @@ handleSelfBullCollision:function(bulls)
         }
     },
 
-/*handleInterPlayerCollisions:function() 
-{
-   if(this.collided==false&& this.player1Bulls.length>0 &&this.player2Bulls.length>0) 
-   {
-     var offset=0; 
-     var speed1=this.calculateSpeedOfAll(this.player1Bulls);
-        var speed2=this.calculateSpeedOfAll(this.player2Bulls); 
-     if(this.player1Bulls[0].collidesWithBull(this.player2Bulls[0]))
-      { 
-        //offset=this.player1Bulls[0].getSpeed()-this.player2Bulls[0].getSpeed();
-        this.collided=true;
-//        offset+=this.player1Power-this.player2Power;
-        offset=speed1-speed2;  
-
-
-        this.player1Bulls[0].collidedOpp=true; 
-        this.player2Bulls[0].collidedOpp=true; 
-       // cc.log(offset+";"+this.player1Power+";"+this.player2Power);
-        this.changeSpeedOfAll(this.player1Bulls,+offset); 
-        this.changeSpeedOfAll(this.player2Bulls,-offset); 
-      } 
-    } 
-  },*/
-   handleInterPlayerCollisions:function()
+  handleInterPlayerCollisions:function()
     {
        if(this.collided==false&& this.player1Bulls.length>0 &&this.player2Bulls.length>0)
         {   
         var offset=0;
-        var speed1=this.calculateSpeedOfAll(this.player1Bulls);
-        var speed2=this.calculateSpeedOfAll(this.player2Bulls); 
+        var speed1=this.player1Bulls[0].getSpeed();//this.calculateSpeedOfAll(this.player1Bulls);
+        var speed2=this.player2Bulls[0].getSpeed();//this.calculateSpeedOfAll(this.player2Bulls); 
          if(this.player1Bulls[0].collidesWithBull(this.player2Bulls[0]))//getBoundingBox(),this.player2Bulls[0].getBoundingBox()))
-            {            
-            offset=speed1-speed2;
+            {     
+		     this.collided=false;
+		
+            offset=this.player1Power-this.player2Power;//speed1-speed2;
+			cc.log(offset);
             this.player1Bulls[0].collidedOpp=true;
-             this.player2Bulls[0].collidedOpp=true;
-            cc.log(offset);      
+            this.player2Bulls[0].collidedOpp=true;
+           // cc.log(offset);		   
             this.changeSpeedOfAll(this.player1Bulls,+offset);
             this.changeSpeedOfAll(this.player2Bulls,-offset);
             }
@@ -260,10 +242,10 @@ calculateSpeedOfAll:function(bulls)
 {
        var speed=0;
         //var joinedBulls=1;
-        
+       speed=bulls[0].getSpeed();
             for(var i=0;i<bulls.length;i++)
             {
-                if(bulls[i].collidedSelf)
+			   if(bulls[i].collidedOpp)
                 {
                    speed=bulls[i].getSpeed();
                     //joinedBulls+=1;
@@ -274,15 +256,6 @@ calculateSpeedOfAll:function(bulls)
                     }
             }
         
-            /*for(var i=0;i<joinedBulls;i++)
-            {
-                if(speed<bulls[i].getSpeed())
-                {
-                    speed=bulls[i].getSpeed();
-                }
-            }*/
-
-       
        return speed;
 
 },
@@ -344,6 +317,14 @@ calculateSpeedOfAll:function(bulls)
          this.setSpeed(BULL_SPEED[this._type]); 
          this._spawnPos=pos; 
          this._parentPlayer=parentPlayer; 
+		 if(this._parentPlayer==0)
+		 {
+			 this._direction=1;
+		 }
+		 else
+		 {
+			 this._direction=-1;
+		 }
          return true; 
        }, 
      setSpwanPos:function(pos) {this._spawnPos=pos; }, 
@@ -371,7 +352,7 @@ calculateSpeedOfAll:function(bulls)
             }
          else 
           {
-            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._speed*dt*4))); 
+            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*10))); 
           } 
         } 
       if(this._spawnPos.y==MAXY) 
@@ -382,13 +363,13 @@ calculateSpeedOfAll:function(bulls)
             } 
           else 
             {
-              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y-=(this._speed*dt*4))); 
+              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*10))); 
             }
          } 
        }, 
-     collidesWithBull:function(bull) 
+     collidesWithBull:function(_sprite) 
      {
-      if(cc.rectIntersectsRect(this.getBoundingBox(),bull.getBoundingBox())) 
+      if(cc.rectIntersectsRect(this.getBoundingBox(),_sprite.getBoundingBox())) 
         {
           return true; 
         } 
