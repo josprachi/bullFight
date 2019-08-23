@@ -102,22 +102,25 @@ var GameScene = cc.Scene.extend({
     },
 
 increaseMana:function(val)
-{if(val==0)
-{
-this.HUD.player1Base.mana_remaining+=manaPotionVal;}
-else
-{
-	this.HUD.player2Base.mana_remaining+=manaPotionVal;
-}
+{if(val==0 )
+  {
+    this.HUD.player1Base.mana_remaining+=manaPotionVal;
+  }
+  else
+  {
+  	this.HUD.player2Base.mana_remaining+=manaPotionVal;
+  }
 },
 increaseLife:function(val)
-{if(val==0)
 {
-this.HUD.player1Base.life_remaining+=lifePotionVal;}
+ if(val==0)
+  {
+     this.HUD.player1Base.life_remaining+=lifePotionVal;
+  }
 else
-{
-	this.HUD.player2Base.life_remaining+=lifePotionVal;
-}
+  {
+  	this.HUD.player2Base.life_remaining+=lifePotionVal;
+  }
 },
     shake:function()
   {

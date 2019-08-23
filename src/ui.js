@@ -6,7 +6,8 @@
 	  {
 		this._super(normalImage, selectedImage, disabledImage, callback, target);
 		this.manaRequired=manaRequired;
-		this.priceTag=new cc.LabelTTF(this.manaRequired,"Arial",30);
+		this.priceTag=new cc.LabelTTF(this.manaRequired,"Arial",26);
+		this.priceTag.setColor(new cc.color(0,0,0,1));
 		
 		this.addChild(this.priceTag);
 		return true;
@@ -103,7 +104,7 @@
 			//if(this.isPrimary)
 			{
 			this.bullButtons[i].setPosition(this.bkgSprite.width*0.125*(i+1),0);     
-			this.bullButtons[i].priceTag.setPosition(cc.p(this.bullButtons[i].width*0.5,this.bullButtons[i].height*1.1));
+			this.bullButtons[i].priceTag.setPosition(cc.p(this.bullButtons[i].width*0.75,this.bullButtons[i].height*0.85));
 			
 			}
 			/*else
@@ -138,16 +139,16 @@
 			 this.setPosition(cc.winSize.width*0.5,cc.winSize.height-this.bkgSprite.height);
 		}*/
 
-		this.manaIndicator= new cc.LabelTTF(this.mana_remaining.toFixed(2),"Arial",30);
-		this.lifeIndicator= new cc.LabelTTF(this.life_remaining.toFixed(2),"Arial",30);
+		this.manaIndicator= new cc.LabelTTF(this.mana_remaining.toFixed(1),"Arial",30);
+		this.lifeIndicator= new cc.LabelTTF(this.life_remaining.toFixed(1),"Arial",30);
 		this.manaIndicator.setColor(new cc.color(0,0,0,1));
 		this.lifeIndicator.setColor(new cc.color(0,0,0,1));
 			
 
-		this.manaIndicator.setPosition(cc.p(this.manaIndicator.width*0.5,this.manaIndicator.height*0.5));
-		this.lifeIndicator.setPosition(cc.p(this.lifeIndicator.width*0.5,this.lifeIndicator.height*0.5));
-		this.manaBar.addChild(this.manaIndicator);
-		this.lifeBar.addChild(this.lifeIndicator); 
+		this.manaIndicator.setPosition(cc.p(this.manaIndicator.width*0.65,0));//this.manaIndicator.height*0.5));
+		this.lifeIndicator.setPosition(cc.p(this.lifeIndicator.width*0.65,0));//this.lifeIndicator.height*0.5));
+		this.manaBarBkg.addChild(this.manaIndicator);
+		this.lifeBarBkg.addChild(this.lifeIndicator); 
 
 
 	   this.catapultSprite= new cc.ProgressTimer(new cc.Sprite(res.Char8_png));
@@ -219,6 +220,15 @@
 		isGameOver=true;
 		this.life_remaining=0;
 	  }
+
+	  if(this.life_remaining>=100)
+	  {		
+		this.life_remaining=100;
+	  }
+	   if(this.mana_remaining>=100)
+	  {		
+		this.mana_remaining=100;
+	  }
 	this.lifeBar.setPercentage(this.life_remaining);
 	this.manaBar.setPercentage(this.mana_remaining);
 
@@ -231,8 +241,8 @@
 	  this.catapultBtn.setEnabled(false);
 	}
 
-	this.manaIndicator.setString(this.mana_remaining.toFixed(2));
-	this.lifeIndicator.setString(this.life_remaining.toFixed(2));
+	this.manaIndicator.setString(this.mana_remaining.toFixed(0));
+	this.lifeIndicator.setString(this.life_remaining.toFixed(0));
 
 	this.rechargeMana(dt);
 	this.unLockBullBtns();

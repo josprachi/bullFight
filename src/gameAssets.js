@@ -15,6 +15,7 @@ var lifePotionVal=15;
 var manaPotionVal=20;
 
 
+
  var lane= cc.Sprite.extend({
  player1Bulls:null,
  player2Bulls:null,
@@ -25,6 +26,9 @@ var manaPotionVal=20;
  collided:false, 
  lifePotion:null,
  manaPotion:null,
+
+ lifePotionAnim:null,
+ manaPotionAnim:null,
 inventaryPos:null,
  
  ctor:function(img) 
@@ -42,6 +46,15 @@ inventaryPos:null,
 	  this.manaPotion=new cc.Sprite(res.manaPotion_png);
 	  this.manaPotion.setPosition(this.inventaryPos);
 	  this.addChild(this.manaPotion,6);
+
+    this.lifePotionAnim=new cc.Sprite(res.lifeAnimPng);
+    this.lifePotionAnim.setPosition(this.inventaryPos);
+    this.addChild(this.lifePotionAnim,6);
+    
+    this.manaPotionAnim=new cc.Sprite(res.manaAnimPng);
+    this.manaPotionAnim.setPosition(this.inventaryPos);
+    this.addChild(this.manaPotionAnim,6);
+
      this.player1PowIndicator= new cc.LabelTTF(this.player1Power,(20)); 
      this.player1PowIndicator.setPosition(this.width*0.5,this.height*0.15); 
      this.player2PowIndicator= new cc.LabelTTF(this.player2Power,(20)); 
@@ -66,10 +79,16 @@ showPotions:function(dt)
 		if(potionId==0)
 		{
 			this.lifePotion.setPosition(this.width*0.5,this.height*0.5);
+      this.lifePotionAnim.setScale(1,1);
+      this.lifePotionAnim.setPosition(this.width*0.5,this.height*0.5);
+      this.lifePotionAnim.setVisible(false);
 		}
 		else
 		{
-		this.manaPotion.setPosition(this.width*0.5,this.height*0.5);	
+		this.manaPotion.setPosition(this.width*0.5,this.height*0.5);
+    this.manaPotionAnim.setScale(1,1);	
+     this.manaPotionAnim.setPosition(this.width*0.5,this.height*0.5);
+      this.manaPotionAnim.setVisible(false);
 		}
 		}
 	},
@@ -176,6 +195,32 @@ calculatePlayerPower:function()
 
     },
 
+movePotionAnim:function(potionId,playerId)
+{
+  var _pos=null;
+  if(playerId==0)
+  {
+    _pos=cc.p(this.width*0.5,-this.height*3);
+  }
+  else
+  {
+    _pos=cc.p(this.width*0.5,this.height*3);
+  }
+  var move = cc.moveTo(3, _pos);
+  var move_mana=cc.moveTo(3, _pos);
+  //var scale=cc.scaleTo(1,0.1,0.1);
+ // var squeez=cc.affineTransformConcat(move, scale);
+
+  if(potionId==0)
+    {
+      this.lifePotionAnim.runAction(move);
+    }
+   if(potionId==1)
+    {
+      this.manaPotionAnim.runAction(move_mana);
+    }
+   
+},
     handleSelfBullCollision:function(bulls)
     {
 	if(bulls.length>0)
@@ -185,11 +230,15 @@ calculatePlayerPower:function()
 				if(bulls[i].collidesWithBull(this.manaPotion))
 				{
 					this.manaPotion.setPosition(this.inventaryPos); 
+          this.manaPotionAnim.setVisible(true);
+          this.movePotionAnim(1,bulls[i]._parentPlayer);
 			         this.getParent().increaseMana(bulls[i]._parentPlayer);
        			}
 				if(bulls[i].collidesWithBull(this.lifePotion))
 				{
-					this.lifePotion.setPosition(this.inventaryPos); 
+					this.lifePotion.setPosition(this.inventaryPos);
+          this.lifePotionAnim.setVisible(true); 
+          this.movePotionAnim(0,bulls[i]._parentPlayer);
 			         this.getParent().increaseLife(bulls[i]._parentPlayer);
        			}
 			}
@@ -352,7 +401,7 @@ calculateSpeedOfAll:function(bulls)
             }
          else 
           {
-            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*10))); 
+            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*3))); 
           } 
         } 
       if(this._spawnPos.y==MAXY) 
@@ -363,7 +412,7 @@ calculateSpeedOfAll:function(bulls)
             } 
           else 
             {
-              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*10))); 
+              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*3))); 
             }
          } 
        }, 

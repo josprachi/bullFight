@@ -120,7 +120,7 @@ varsionTitle:null,
         this.addChild(this.SuperGamingTitle, 3);
 
 
-        this.varsionTitle=new cc.LabelTTF("Version: "+ 3.0,"Arial",24);
+        this.varsionTitle=new cc.LabelTTF("Version: "+ 4.0,"Arial",24);
         this.varsionTitle.setPosition(cc.winSize.width/2,cc.winSize.height*0.1);
         this.addChild(this.varsionTitle, 3);
 	},
