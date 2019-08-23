@@ -371,7 +371,7 @@ calculateSpeedOfAll:function(bulls)
             }
          else 
           {
-            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._speed*dt))); 
+            this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._speed*dt*4))); 
           } 
         } 
       if(this._spawnPos.y==MAXY) 
@@ -382,7 +382,7 @@ calculateSpeedOfAll:function(bulls)
             } 
           else 
             {
-              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y-=(this._speed*dt))); 
+              this.setPosition(cc.p(this.getPosition().x,this.getPosition().y-=(this._speed*dt*4))); 
             }
          } 
        }, 
@@ -399,7 +399,7 @@ calculateSpeedOfAll:function(bulls)
       }, 
      die:function() 
      {
-		 cc.log("die");
+		 
       this.unscheduleUpdate();
      // this.getParent().shake();	  
       this.getParent().hurtOpponent(this._parentPlayer,(this.getPower()*0.5)); 

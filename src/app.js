@@ -84,7 +84,7 @@ var GameScene = cc.Scene.extend({
         
         this.menulayer.displayMenu();
             
-        this.scheduleOnce(this.shake,1);
+        //this.scheduleOnce(this.shake,1);
 
         this.scheduleUpdate();
     },
@@ -105,8 +105,8 @@ var GameScene = cc.Scene.extend({
   var move = cc.moveBy(0.05, cc.p(8, 8));
   var move_back = move.reverse();
   var move_seq = cc.sequence(move, move_back);
-  var move_rep = move_seq.repeatForever();
-  var t_copy = move_rep.clone();
+  var move_rep = cc.repeat(move_seq, 4);//move_seq.repeatForever();
+ // var t_copy = move_rep.clone();
 
   this.runAction(move_rep);
   
