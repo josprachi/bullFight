@@ -14,6 +14,11 @@
         return true;
 
     },
+	shake:function()
+	{  cc.log("shake from bkg layer");
+		
+		this.getParent().shake();
+	},	
     });
 
 
@@ -85,7 +90,14 @@
     hurtOpponent:function(opponentId,hitpoints)
         {
           this.getParent().hurtOpponent(opponentId,hitpoints);
+		  //this.getParent().shake();
         },
+	
+    shake:function()
+	{  cc.log("shake from game layer");
+		
+		this.getParent().shake();
+	},	
     
     update:function(dt)
      {

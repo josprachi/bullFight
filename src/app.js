@@ -84,7 +84,7 @@ var GameScene = cc.Scene.extend({
         
         this.menulayer.displayMenu();
             
-        //this.shake();
+        this.scheduleOnce(this.shake,1);
 
         this.scheduleUpdate();
     },
@@ -101,6 +101,7 @@ var GameScene = cc.Scene.extend({
 
     shake:function()
   {
+	  cc.log("shake");
   var move = cc.moveBy(0.05, cc.p(8, 8));
   var move_back = move.reverse();
   var move_seq = cc.sequence(move, move_back);
@@ -111,8 +112,6 @@ var GameScene = cc.Scene.extend({
   
 
   },
-
-
     setBullDetails:function(bullType,baseSource)
     {     
         this.bullToshoot=bullType;

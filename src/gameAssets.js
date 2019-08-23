@@ -313,7 +313,7 @@ calculateSpeedOfAll:function(bulls)
         } 
   }, 
   hurtOpponent:function(playerid,hitpoints) 
-  {
+  {cc.log("hurtOpponent");
     if(playerid==0) 
       {
         this.getParent().hurtOpponent(1,hitpoints);
@@ -322,6 +322,7 @@ calculateSpeedOfAll:function(bulls)
       {
         this.getParent().hurtOpponent(0,hitpoints); 
       } 
+	  this.getParent().shake();
   }, 
  }); 
 
@@ -398,7 +399,9 @@ calculateSpeedOfAll:function(bulls)
       }, 
      die:function() 
      {
-      this.unscheduleUpdate(); 
+		 cc.log("die");
+      this.unscheduleUpdate();
+     // this.getParent().shake();	  
       this.getParent().hurtOpponent(this._parentPlayer,(this.getPower()*0.5)); 
       this.getParent().removeBullFromLane(this); 
       this.removeFromParent(); 

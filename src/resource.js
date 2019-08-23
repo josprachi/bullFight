@@ -28,6 +28,8 @@ var res = {
     mainMenuBkg_png: "res/Background/game_background_1.png",
     Player1_png : "res/PlayerUI/Player1.png",
     Player2_png : "res/PlayerUI/Player2.png",
+	crown_png: "res/PlayerUI/crown.png",
+    vs_png : "res/PlayerUI/vs.png",
     LaneBar_png : "res/Background/laneBar.png",
     ScoreBar1_png : "res/PlayerUI/score_bar.png",
     ScoreBar2_png : "res/PlayerUI/score_bar2.png",
