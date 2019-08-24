@@ -239,8 +239,8 @@ movePotionAnim:function(potionId,playerId)
 					this.lifePotion.setPosition(this.inventaryPos);
           this.lifePotionAnim.setVisible(true); 
           this.movePotionAnim(0,bulls[i]._parentPlayer);
-			         this.getParent().increaseLife(bulls[i]._parentPlayer);
-       			}
+			    this.getParent().increaseLife(bulls[i]._parentPlayer);
+       	}
 			}
 		}
         if(bulls.length>1)
@@ -401,6 +401,7 @@ calculateSpeedOfAll:function(bulls)
             }
          else 
           {
+           // (this.getParent()).getParent().increaseLife(this._parentPlayer);
             this.setPosition(cc.p(this.getPosition().x,this.getPosition().y+=(this._direction*this._speed*dt*3))); 
           } 
         } 
